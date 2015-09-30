@@ -30,13 +30,13 @@ var LB struct {
 	lb *roundrobin.RoundRobin
 }
 
-func HandleIndex(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "")
-}
-
 func setStatus(w http.ResponseWriter, status string) {
 	w.Header().Set("Content-Type", "application/json")
 	io.WriteString(w, fmt.Sprintf(`{"status": "%s"}`, status))
+}
+
+func HandleIndex(w http.ResponseWriter, r *http.Request) {
+	io.WriteString(w, "")
 }
 
 func HandleAdd(w http.ResponseWriter, r *http.Request) {
@@ -54,6 +54,8 @@ func HandleAdd(w http.ResponseWriter, r *http.Request) {
 				log.Infof("%s was added", s)
 			}
 		}
+	} else {
+		setStatus(w, "ERROR")
 	}
 }
 
@@ -72,6 +74,8 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 				log.Infof("%s was removed", s)
 			}
 		}
+	} else {
+		setStatus(w, "ERROR")
 	}
 }
 
