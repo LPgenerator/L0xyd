@@ -32,7 +32,6 @@ var LB struct {
 }
 
 func setStatus(w http.ResponseWriter, status string) {
-	w.Header().Set("Content-Type", "application/json")
 	if status == "ERROR" {
 		http.Error(
 			w, fmt.Sprintf(`{"status": "%s"}`, status),
@@ -45,6 +44,7 @@ func setStatus(w http.ResponseWriter, status string) {
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, PUT, DELETE")
+	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Server", "lpgenerator.ru")
 
 	if r.Method == "PUT" {
@@ -99,10 +99,8 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleList(w http.ResponseWriter, r *http.Request) {
-	servers := LB.lb.Servers()
-	data, err := json.Marshal(servers)
+	data, err := json.Marshal(LB.lb.Servers())
 	if err == nil {
-		w.Header().Set("Content-Type", "application/json")
 		io.WriteString(w, string(data))
 	} else {
 		setStatus(w, "ERROR")
