@@ -1,5 +1,5 @@
 package common
 
-var NAME = "gitlab-ci-multi-runner"
+var NAME = "lpg-load-balancer"
 var VERSION = "dev"
 var REVISION = "HEAD"

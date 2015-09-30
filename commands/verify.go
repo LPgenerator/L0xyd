@@ -17,14 +17,7 @@ func (c *VerifyCommand) Execute(context *cli.Context) {
 		log.Fatalln(err)
 		return
 	}
-
-	// save config file
-	err = c.saveConfig()
-	if err != nil {
-		log.Fatalln("Failed to update", c.ConfigFile, err)
-	}
-
-	log.Println("Updated")
+	log.Println("OK")
 }
 
 func init() {

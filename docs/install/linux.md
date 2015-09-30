@@ -24,7 +24,7 @@ useradd --create-home lpg-load-balancer --shell /bin/bash
 
 Install and run as service (on Linux):
 ```bash
-sudo lpg-load-balancer install --user=gitlab-runner --working-directory=/home/gitlab-runner
+sudo lpg-load-balancer install --user=lpg-load-balancer --working-directory=/home/lpg-load-balancer
 sudo lpg-load-balancer start
 ```
 
