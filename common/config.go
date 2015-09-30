@@ -13,22 +13,31 @@ import (
 )
 
 
-type BaseConfig struct {
-	Concurrent int             `toml:"concurrent" json:"concurrent"`
-	User       string         `toml:"user" json:"user"`
-}
-
 type Config struct {
 	BaseConfig
 	ModTime time.Time `json:"-"`
 	Loaded  bool      `json:"-"`
 }
 
+type Server struct {
+	Url           string
+	Weight        int
+}
+
+type BaseConfig struct {
+	ApiAddress string         `toml:"api-address" json:"api-address"`
+	LbAddress  string         `toml:"lb-address" json:"lb-address"`
+	LbLogFile  string         `toml:"lb-log-file" json:"lb-log-file"`
+	Servers map[string]Server
+}
+
+
 func NewConfig() *Config {
 	return &Config{
 		BaseConfig: BaseConfig{
-			Concurrent: 1,
-			User: "unknown",
+			ApiAddress: "0.0.0.0:9090",
+			LbAddress: "127.0.0.1:8080",
+			LbLogFile: "",
 		},
 	}
 }

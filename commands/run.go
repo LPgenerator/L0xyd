@@ -12,6 +12,7 @@ import (
 
 	"github.com/codegangsta/cli"
 
+	"github.com/mailgun/oxy/utils"
 	"github.com/mailgun/oxy/stream"
 	"github.com/mailgun/oxy/forward"
 	"github.com/mailgun/oxy/roundrobin"
@@ -124,6 +125,11 @@ func HandleList(w http.ResponseWriter, r *http.Request) {
 
 
 func (c *LBCommand) Execute(context *cli.Context) {
+	err := c.loadConfig()
+	if err != nil {
+		log.Fatalln(err)
+		return
+	}
 
 	go func() {
 		http.HandleFunc(
@@ -132,21 +138,36 @@ func (c *LBCommand) Execute(context *cli.Context) {
 		// http.HandleFunc("/del/", helpers.LogRequests(HandleDel))
 		// http.HandleFunc("/list/", helpers.LogRequests(HandleList))
 
-		http.ListenAndServe(":8182", nil)
+		log.Println("LB API listen at", c.config.ApiAddress)
+		http.ListenAndServe(c.config.ApiAddress, nil)
 	}()
 
 	oxyLogger := &helpers.OxyLogger{}
+	fwd_logger := forward.Logger(oxyLogger)
+	stm_logger := stream.Logger(oxyLogger)
 
-	// l := utils.NewFileLogger(os.Stdout, utils.INFO)
-	fwd, _ := forward.New(forward.Logger(oxyLogger))
+	if c.config.LbLogFile != "" {
+		f, err := os.OpenFile(
+			c.config.LbLogFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+		if err != nil {
+			log.Fatalf("error opening file: %v", err)
+		} else {
+			fileLogger := utils.NewFileLogger(f, utils.INFO)
+			fwd_logger = forward.Logger(fileLogger)
+			stm_logger = stream.Logger(fileLogger)
+			defer f.Close()
+		}
+	}
+
+	fwd, _ := forward.New(fwd_logger)
 	lb, _ := roundrobin.New(fwd)
 	LB.lb = lb
 
 	stream, _ := stream.New(
-		lb, stream.Logger(oxyLogger), stream.Retry(
+		lb, stm_logger, stream.Retry(
 			`IsNetworkError() && RequestMethod() == "GET" && Attempts() < 2`))
 
-	listen := ":8080"
+	listen := c.config.LbAddress
 	if c.ListenAddr != "" {
 		listen = c.ListenAddr
 	}
@@ -156,8 +177,17 @@ func (c *LBCommand) Execute(context *cli.Context) {
 		Handler:        stream,
 	}
 
-	log.Println("Load Balancer listen at", listen)
+	for serverName, server := range c.config.Servers {
+		u, err := url.Parse(server.Url)
+		if err == nil {
+			lb.UpsertServer(u, roundrobin.Weight(server.Weight))
+			log.Printf(
+				"Server: %s (Url=%s, Weight=%d)",
+				serverName, server.Url, server.Weight)
+		}
+	}
 
+	log.Println("LB listen at", listen)
 	if err := s.ListenAndServe(); err != nil {
 		log.Errorf("Server %s exited with error: %s", s.Addr, err)
 		os.Exit(255)

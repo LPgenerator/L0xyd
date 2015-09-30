@@ -8,7 +8,7 @@ type OxyLogger struct {
 }
 
 func (oxylogger *OxyLogger) Infof(format string, args ...interface{}) {
-	log.Debugf(format, args...)
+	log.Infof(format, args...)
 }
 
 func (oxylogger *OxyLogger) Warningf(format string, args ...interface{}) {
