@@ -1,0 +1,6 @@
+* Mirror GET requests to test server
+* LB groups
+* Api listen address
+* Health check
+* Hook when instance is down
+* Auto-scaling
