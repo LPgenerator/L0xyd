@@ -38,6 +38,7 @@ func NewConfig() *Config {
 			ApiAddress: "0.0.0.0:9090",
 			LbAddress: "127.0.0.1:8080",
 			LbLogFile: "",
+			Servers: make(map[string]Server),
 		},
 	}
 }
