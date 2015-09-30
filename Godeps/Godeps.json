@@ -35,6 +35,10 @@
 		{
 			"ImportPath": "gitlab.com/ayufan/golang-cli-helpers",
 			"Rev": "0a14b63a7466ee44de4a90f998fad73afa8482bf"
+		},
+		{
+			"ImportPath": "github.com/liudng/dogo",
+			"Rev": "27f30515c54c2857561ad2483df6f9fa87720f82"
 		}
 	]
 }

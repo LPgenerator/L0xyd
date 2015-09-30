@@ -21,7 +21,7 @@ RPM_ARCHS ?= x86_64 i686 arm armhf
 all: deps test lint toolchain build
 
 run:
-	go run main.go run
+	dogo
 
 run-http-test:
 	@wrk -c 1 -d 30s -t 1 --latency --timeout 1 http://127.0.0.1:8080
