@@ -1,1 +1,12 @@
-api-listen = 0.0.0.0:8182
+# API listen port
+api-address = "0.0.0.0:8081"
+
+# LB listen port
+lb-address = "127.0.0.1:8080"
+
+# Default instances under Load Balancer
+[instances]
+    [web-1]
+        url = "http://10.0.3.100"
+    [web-2]
+        url = "http://10.0.3.200"

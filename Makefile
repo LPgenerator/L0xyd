@@ -27,9 +27,9 @@ run-http-test:
 	@wrk -c 1 -d 30s -t 1 --latency --timeout 1 http://127.0.0.1:8080
 
 register-fake-http:
-	curl "http://127.0.0.1:8182/add/?url=http://127.0.0.1:8081" && echo
-	curl "http://127.0.0.1:8182/add/?url=http://127.0.0.1:8082" && echo
-	curl "http://127.0.0.1:8182/list/" && echo
+	curl -X PUT --user lb:7eNQ4iWLgDw4Q6w -d 'url=127.0.0.1:8081' -s http://127.0.0.1:8182 && echo
+	curl -X PUT --user lb:7eNQ4iWLgDw4Q6w -d 'url=127.0.0.1:8082' -s http://127.0.0.1:8182 && echo
+	curl -X GET --user lb:7eNQ4iWLgDw4Q6w -s http://127.0.0.1:8182 && echo
 
 help:
 	# make all => deps test lint toolchain build

@@ -25,6 +25,12 @@ var SHS struct {
 }
 
 func HandleMain(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Cache-control", `no-cache="set-cookie"`)
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	w.Header().Set("Vary", `Cookie, Accept-Encoding`)
+	w.Header().Set("Server", "lpgenerator.ru")
+	w.Header().Set("Connection", "Keep-Alive")
 	io.WriteString(w, fmt.Sprintf("[%s] Hello, World!", SHS.listen))
 }
 

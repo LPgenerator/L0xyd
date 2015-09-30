@@ -4,6 +4,7 @@ import (
 	"os"
 	"io"
 	"fmt"
+	"strconv"
 	"strings"
 	"net/url"
 	"net/http"
@@ -19,6 +20,12 @@ import (
 	"github.com/gotlium/lpg-load-balancer/common"
     "github.com/gotlium/lpg-load-balancer/helpers"
 )
+
+type Server struct {
+	Url           string
+	Weight        int
+}
+
 
 type LBCommand struct {
 	configOptions
@@ -60,17 +67,20 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 func HandleAdd(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	s := r.Form.Get("url")
+	v, err := strconv.Atoi(r.Form.Get("weight"))
+	if err != nil { v = 0 }
 	if s != "" {
-		u, err := url.Parse(s)
+		u, err := url.Parse("http://" + s)
 		if err != nil {
 			setStatus(w, "ERROR")
 		} else {
-			if err := LB.lb.UpsertServer(u); err != nil {
+			//LB.lb.UpsertServer(url, roundrobin.Weight(server.Weight))
+			if err := LB.lb.UpsertServer(u, roundrobin.Weight(v)); err != nil {
 				setStatus(w, "ERROR")
 				log.Errorf("failed to add %s, err: %s", s, err)
 			} else {
 				setStatus(w, "OK")
-				log.Infof("%s was added", s)
+				log.Infof("%s was added. weight: %d", s, v)
 			}
 		}
 	} else {
@@ -81,13 +91,13 @@ func HandleAdd(w http.ResponseWriter, r *http.Request) {
 func HandleDel(w http.ResponseWriter, r *http.Request) {
 	s := strings.Split(r.URL.Path, "/")
 	if len(s) == 2 {
-		u, err := url.Parse(s[1])
+		u, err := url.Parse("http://" + s[1])
 		if err != nil {
 			setStatus(w, "ERROR")
 		} else {
 			if err := LB.lb.RemoveServer(u); err != nil {
 				setStatus(w, "ERROR")
-				log.Errorf("failed to remove %s, err: %v", s, err)
+				log.Errorf("failed to remove %s, err: %v", s[1], err)
 			} else {
 				setStatus(w, "OK")
 				log.Infof("%s was removed", s[1])
@@ -99,7 +109,13 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleList(w http.ResponseWriter, r *http.Request) {
-	data, err := json.Marshal(LB.lb.Servers())
+	servers := []Server{}
+	for _, url := range LB.lb.Servers() {
+		w, _ := LB.lb.ServerWeight(url)
+		servers = append(servers,  Server{Url: url.String(), Weight: w})
+	}
+
+	data, err := json.Marshal(servers)
 	if err == nil {
 		io.WriteString(w, string(data))
 	} else {
