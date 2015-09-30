@@ -3,7 +3,12 @@
     "SourceDir": [
         "."
     ],
-    "SourceExt": [".c", ".cpp", ".go", ".h"],
+    "SourceExt": [
+        ".c",
+        ".cpp",
+        ".go",
+        ".h"
+    ],
     "BuildCmd": "go build main.go",
     "RunCmd": "./main -l debug run",
     "Decreasing": 1
