@@ -32,7 +32,13 @@ var LB struct {
 
 func setStatus(w http.ResponseWriter, status string) {
 	w.Header().Set("Content-Type", "application/json")
-	io.WriteString(w, fmt.Sprintf(`{"status": "%s"}`, status))
+	if status == "ERROR" {
+		http.Error(
+			w, fmt.Sprintf(`{"status": "%s"}`, status),
+			http.StatusInternalServerError)
+	} else {
+		io.WriteString(w, fmt.Sprintf(`{"status": "%s"}`, status))
+	}
 }
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
