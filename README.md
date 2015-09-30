@@ -7,12 +7,12 @@ Simple load balancer with Http API.
 
 Add instance to LB
 
-    curl -s "http://127.0.0.1:8182/add/?url=http://127.0.0.1:8081" | jq .
-
-Remove instance from LB
-
-    curl -s "http://127.0.0.1:8182/del/?url=http://127.0.0.1:8081" | jq .
+    curl -X PUT --user lb:7eNQ4iWLgDw4Q6w -d 'url=127.0.0.1:8081' -H "Accept: application/json" -s -i http://127.0.0.1:8182
 
 List all instances under LB
 
-    curl -s "http://127.0.0.1:8182/list/" | jq .
+    curl -X GET --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:8182
+
+Remove instance from LB
+
+    curl -X DELETE --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:8182/127.0.0.1:8081

@@ -4,6 +4,7 @@ import (
 	"os"
 	"io"
 	"fmt"
+	"strings"
 	"net/url"
 	"net/http"
 	"encoding/json"
@@ -37,16 +38,28 @@ func setStatus(w http.ResponseWriter, status string) {
 			w, fmt.Sprintf(`{"status": "%s"}`, status),
 			http.StatusInternalServerError)
 	} else {
+		// w.WriteHeader(http.StatusCreated)
 		io.WriteString(w, fmt.Sprintf(`{"status": "%s"}`, status))
 	}
 }
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
-	io.WriteString(w, "")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, PUT, DELETE")
+	w.Header().Set("Server", "lpgenerator.ru")
+
+	if r.Method == "PUT" {
+		HandleAdd(w, r)
+	} else if r.Method == "DELETE" {
+		HandleDel(w, r)
+	} else {
+		HandleList(w, r)
+	}
+
 }
 
 func HandleAdd(w http.ResponseWriter, r *http.Request) {
-	s := r.URL.Query().Get("url")
+	r.ParseForm()
+	s := r.Form.Get("url")
 	if s != "" {
 		u, err := url.Parse(s)
 		if err != nil {
@@ -66,9 +79,9 @@ func HandleAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleDel(w http.ResponseWriter, r *http.Request) {
-	s := r.URL.Query().Get("url")
-	if s != "" {
-		u, err := url.Parse(s)
+	s := strings.Split(r.URL.Path, "/")
+	if len(s) == 2 {
+		u, err := url.Parse(s[1])
 		if err != nil {
 			setStatus(w, "ERROR")
 		} else {
@@ -77,7 +90,7 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 				log.Errorf("failed to remove %s, err: %v", s, err)
 			} else {
 				setStatus(w, "OK")
-				log.Infof("%s was removed", s)
+				log.Infof("%s was removed", s[1])
 			}
 		}
 	} else {
@@ -100,10 +113,11 @@ func HandleList(w http.ResponseWriter, r *http.Request) {
 func (c *LBCommand) Execute(context *cli.Context) {
 
 	go func() {
-		http.HandleFunc("/", helpers.LogRequests(HandleIndex))
-		http.HandleFunc("/add/", helpers.LogRequests(HandleAdd))
-		http.HandleFunc("/del/", helpers.LogRequests(HandleDel))
-		http.HandleFunc("/list/", helpers.LogRequests(HandleList))
+		http.HandleFunc(
+			"/", helpers.BasicAuth(helpers.LogRequests(HandleIndex)))
+		// http.HandleFunc("/add/", helpers.LogRequests(HandleAdd))
+		// http.HandleFunc("/del/", helpers.LogRequests(HandleDel))
+		// http.HandleFunc("/list/", helpers.LogRequests(HandleList))
 
 		http.ListenAndServe(":8182", nil)
 	}()

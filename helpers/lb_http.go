@@ -33,7 +33,7 @@ func BasicAuth(pass handler) handler {
 }
 
 func Validate(username, password string) bool {
-	if username == "username" && password == "password" {
+	if username == "lb" && password == "7eNQ4iWLgDw4Q6w" {
 		return true
 	}
 	return false
