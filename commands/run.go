@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/url"
 	"net/http"
+	"encoding/json"
 
 	"github.com/codegangsta/cli"
 
@@ -33,17 +34,23 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "")
 }
 
+func setStatus(w http.ResponseWriter, status string) {
+	w.Header().Set("Content-Type", "application/json")
+	io.WriteString(w, fmt.Sprintf(`{"status": "%s"}`, status))
+}
+
 func HandleAdd(w http.ResponseWriter, r *http.Request) {
 	s := r.URL.Query().Get("url")
 	if s != "" {
 		u, err := url.Parse(s)
 		if err != nil {
-			io.WriteString(w, "ERROR\n")
+			setStatus(w, "ERROR")
 		} else {
 			if err := LB.lb.UpsertServer(u); err != nil {
+				setStatus(w, "ERROR")
 				log.Errorf("failed to add %s, err: %s", s, err)
 			} else {
-				io.WriteString(w, "OK\n")
+				setStatus(w, "OK")
 				log.Infof("%s was added", s)
 			}
 		}
@@ -55,13 +62,13 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 	if s != "" {
 		u, err := url.Parse(s)
 		if err != nil {
-			io.WriteString(w, "ERROR\n")
+			setStatus(w, "ERROR")
 		} else {
 			if err := LB.lb.RemoveServer(u); err != nil {
-				io.WriteString(w, "ERROR\n")
+				setStatus(w, "ERROR")
 				log.Errorf("failed to remove %s, err: %v", s, err)
 			} else {
-				io.WriteString(w, "OK\n")
+				setStatus(w, "OK")
 				log.Infof("%s was removed", s)
 			}
 		}
@@ -70,8 +77,12 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 
 func HandleList(w http.ResponseWriter, r *http.Request) {
 	servers := LB.lb.Servers()
-	for _, v := range servers {
-		io.WriteString(w, fmt.Sprintf("%s\n", v))
+	data, err := json.Marshal(servers)
+	if err == nil {
+		w.Header().Set("Content-Type", "application/json")
+		io.WriteString(w, string(data))
+	} else {
+		setStatus(w, "ERROR")
 	}
 }
 
