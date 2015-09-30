@@ -4,10 +4,12 @@ import (
 	"os"
 	"io"
 	"fmt"
+	"syscall"
 	"strconv"
 	"strings"
 	"net/url"
 	"net/http"
+	"os/signal"
 	"encoding/json"
 
 	"github.com/codegangsta/cli"
@@ -37,6 +39,7 @@ type LBCommand struct {
 
 var LB struct {
 	lb *roundrobin.RoundRobin
+	config *common.Config
 }
 
 func setStatus(w http.ResponseWriter, status string) {
@@ -47,6 +50,31 @@ func setStatus(w http.ResponseWriter, status string) {
 	} else {
 		// w.WriteHeader(http.StatusCreated)
 		io.WriteString(w, fmt.Sprintf(`{"status": "%s"}`, status))
+	}
+}
+
+func removeServerFromConfig(s string) {
+	for serverName, server := range LB.config.Servers {
+		if server.Url == fmt.Sprintf("http://%s", s) {
+			delete(LB.config.Servers, serverName)
+		}
+	}
+}
+
+func addServerToConfig(s string, v int) {
+	counter := 1
+	for {
+		val := LB.config.Servers[fmt.Sprintf("web-%d", counter)]
+		if val.Url == "" {
+			break
+		} else {
+			counter = counter + 1
+		}
+	}
+	web := fmt.Sprintf("web-%d", counter)
+	LB.config.Servers[web] = common.Server{
+		Url: "http://" + s,
+		Weight: v,
 	}
 }
 
@@ -79,6 +107,8 @@ func HandleAdd(w http.ResponseWriter, r *http.Request) {
 				setStatus(w, "ERROR")
 				log.Errorf("failed to add %s, err: %s", s, err)
 			} else {
+				removeServerFromConfig(s)
+				addServerToConfig(s, v)
 				setStatus(w, "OK")
 				log.Infof("%s was added. weight: %d", s, v)
 			}
@@ -99,6 +129,7 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 				setStatus(w, "ERROR")
 				log.Errorf("failed to remove %s, err: %v", s[1], err)
 			} else {
+				removeServerFromConfig(s[1])
 				setStatus(w, "OK")
 				log.Infof("%s was removed", s[1])
 			}
@@ -131,6 +162,22 @@ func (c *LBCommand) Execute(context *cli.Context) {
 		return
 	}
 
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt)
+	signal.Notify(sig, syscall.SIGTERM)
+	signal.Notify(sig, syscall.SIGKILL)
+	signal.Notify(sig, syscall.SIGQUIT)
+	signal.Notify(sig, syscall.SIGINT)
+	go func() {
+		<-sig
+		log.Println("Stop signal received")
+		err = c.saveConfig()
+		if err != nil {
+			log.Fatalln(err)
+		}
+		os.Exit(1)
+	}()
+
 	go func() {
 		http.HandleFunc(
 			"/", helpers.BasicAuth(helpers.LogRequests(HandleIndex)))
@@ -161,7 +208,9 @@ func (c *LBCommand) Execute(context *cli.Context) {
 
 	fwd, _ := forward.New(fwd_logger)
 	lb, _ := roundrobin.New(fwd)
+
 	LB.lb = lb
+	LB.config = c.config
 
 	stream, _ := stream.New(
 		lb, stm_logger, stream.Retry(
@@ -182,7 +231,7 @@ func (c *LBCommand) Execute(context *cli.Context) {
 		if err == nil {
 			lb.UpsertServer(u, roundrobin.Weight(server.Weight))
 			log.Printf(
-				"Server: %s (Url=%s, Weight=%d)",
+				"LB: %s (Url=%s, Weight=%d) was added.",
 				serverName, server.Url, server.Weight)
 		}
 	}

@@ -17,7 +17,7 @@ func SetupLogLevelOptions(app *cli.App) {
 		},
 		cli.StringFlag{
 			Name:  "log-level, l",
-			Value: "info",
+			Value: "error",
 			Usage: "Log level (options: debug, info, warn, error, fatal, panic)",
 		},
 		cli.StringFlag{

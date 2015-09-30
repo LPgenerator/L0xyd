@@ -1,7 +1,6 @@
 * Возможность исключить убитый инстанс, что бы небыло просадки производительности, после сообщить куда надо, что бы переподнять инстанс
 * Mirror GET requests to test server
 * LB groups
-* Api listen address
 * Health check
 * Hook when instance is down
 * Auto-scaling
