@@ -4,6 +4,9 @@ api-address = "0.0.0.0:8081"
 # LB listen port
 lb-address = "127.0.0.1:8080"
 
+# Log all into file
+lb-log-file = "/var/log/lpg-lb.log"
+
 # Default instances under Load Balancer
 [instances]
     [web-1]

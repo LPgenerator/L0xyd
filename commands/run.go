@@ -74,7 +74,6 @@ func HandleAdd(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			setStatus(w, "ERROR")
 		} else {
-			//LB.lb.UpsertServer(url, roundrobin.Weight(server.Weight))
 			if err := LB.lb.UpsertServer(u, roundrobin.Weight(v)); err != nil {
 				setStatus(w, "ERROR")
 				log.Errorf("failed to add %s, err: %s", s, err)

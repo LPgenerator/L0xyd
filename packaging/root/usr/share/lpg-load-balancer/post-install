@@ -37,5 +37,12 @@ lpg-load-balancer stop >/dev/null 2>/dev/null || :
 lpg-load-balancer uninstall >/dev/null 2>/dev/null || :
 lpg-load-balancer install --user=$USER --working-directory=$HOMEDIR
 
+# todo: tune /etc/sysctl.conf
+# net.ipv4.tcp_tw_reuse = 1
+# net.ipv4.tcp_tw_recycle = 1
+# net.ipv4.ip_local_port_range = 50000
+# ulimit -n 102400
+# /etc/security/limits.d?
+
 # start runner service
 lpg-load-balancer start || :

@@ -5,6 +5,6 @@
     ],
     "SourceExt": [".c", ".cpp", ".go", ".h"],
     "BuildCmd": "go build main.go",
-    "RunCmd": "./main run",
+    "RunCmd": "./main -l debug run",
     "Decreasing": 1
 }

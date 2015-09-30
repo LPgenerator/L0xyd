@@ -4,7 +4,7 @@ import (
 	"os"
 	"fmt"
 	"path"
-	"runtime"
+	//"runtime"
 
 	"github.com/codegangsta/cli"
 	log "github.com/Sirupsen/logrus"
@@ -27,7 +27,8 @@ func init() {
 
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
+	// < Go 1.5
+	// runtime.GOMAXPROCS(runtime.NumCPU())
 
 	app := cli.NewApp()
 	app.Name = path.Base(os.Args[0])
