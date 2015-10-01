@@ -65,3 +65,38 @@ This project is designed for the Linux, OS X and Windows operating systems.
 * [Install on Windows (preferred)](docs/install/windows.md)
 * [Use on FreeBSD](docs/install/freebsd.md)
 * [Install development environment](docs/development/README.md)
+
+### Help
+
+```bash
+$ lpg-load-balancer --help
+
+NAME:
+   lpg-load-balancer - Simple load balancer with Http API.
+
+USAGE:
+   lpg-load-balancer [global options] command [command options] [arguments...]
+   
+VERSION:
+   1.0~beta.0.g4badd3b (4badd3b)
+   
+AUTHOR(S):
+   GoTLiuM InSPiRiT <gotlium@gmail.com> 
+   
+COMMANDS:
+   run          Run Load Balancer
+   install      Install service
+   uninstall    Uninstall service
+   start        Start service
+   stop         Stop service
+   restart      Restart service
+   http         Run simple HTTP server
+   verify       Verify configuration
+   help, h      Shows a list of commands or help for one command
+   
+GLOBAL OPTIONS:
+   --debug                      Debug mode [$DEBUG]
+   --log-level, -l "error"      Log level (options: debug, info, warn, error, fatal, panic)
+   --help, -h                   Show help
+   --version, -v                Print the version
+```

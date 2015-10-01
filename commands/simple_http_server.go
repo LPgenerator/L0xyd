@@ -29,7 +29,7 @@ func HandleMain(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Cache-control", `no-cache="set-cookie"`)
 	w.Header().Set("Access-Control-Allow-Methods", "GET")
 	w.Header().Set("Vary", `Cookie, Accept-Encoding`)
-	w.Header().Set("Server", "lpgenerator.ru")
+	w.Header().Set("Server", "nginx")
 	w.Header().Set("Connection", "Keep-Alive")
 	w.Header().Set("X-Listen", SHS.listen)
 	io.WriteString(w, fmt.Sprintf("[%s] Hello, World!", SHS.listen))

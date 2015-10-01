@@ -13,8 +13,8 @@ import (
 
 const (
 	defaultServiceName = "lpg-load-balancer"
-	defaultDisplayName = "lpg-load-balancer"
-	defaultDescription = "lpg-load-balancer"
+	defaultDisplayName = "Simple load balancer with Http API."
+	defaultDescription = "Simple load balancer with Http API."
 )
 
 type ServiceLogHook struct {
@@ -192,31 +192,31 @@ func init() {
 
 	common.RegisterCommand(cli.Command{
 		Name:   "install",
-		Usage:  "install service",
+		Usage:  "Install service",
 		Action: RunServiceControl,
 		Flags:  installFlags,
 	})
 	common.RegisterCommand(cli.Command{
 		Name:   "uninstall",
-		Usage:  "uninstall service",
+		Usage:  "Uninstall service",
 		Action: RunServiceControl,
 		Flags:  flags,
 	})
 	common.RegisterCommand(cli.Command{
 		Name:   "start",
-		Usage:  "start service",
+		Usage:  "Start service",
 		Action: RunServiceControl,
 		Flags:  flags,
 	})
 	common.RegisterCommand(cli.Command{
 		Name:   "stop",
-		Usage:  "stop service",
+		Usage:  "Stop service",
 		Action: RunServiceControl,
 		Flags:  flags,
 	})
 	common.RegisterCommand(cli.Command{
 		Name:   "restart",
-		Usage:  "restart service",
+		Usage:  "Restart service",
 		Action: RunServiceControl,
 		Flags:  flags,
 	})

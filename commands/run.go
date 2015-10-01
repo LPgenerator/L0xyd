@@ -25,15 +25,15 @@ import (
 )
 
 type Server struct {
-	Url           string
-	Weight        int
+	Url              string
+	Weight           int
 }
 
 
 type RunCommand struct {
 	configOptions
 
-	ListenAddr string `short:"l" long:"listen" description:"Listen address:port"`
+	ListenAddr       string `short:"l" long:"listen" description:"Listen address:port"`
 	ServiceName      string `short:"n" long:"service" description:"Use different names for different services"`
 	WorkingDirectory string `short:"d" long:"working-directory" description:"Specify custom working directory"`
 	Syslog           bool   `long:"syslog" description:"Log to syslog"`

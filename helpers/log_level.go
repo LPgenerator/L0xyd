@@ -10,7 +10,7 @@ func SetupLogLevelOptions(app *cli.App) {
 	newFlags := []cli.Flag{
 		cli.BoolFlag{
 			Name:   "debug",
-			Usage:  "debug mode",
+			Usage:  "Debug mode",
 			EnvVar: "DEBUG",
 		},
 		cli.StringFlag{
