@@ -14,7 +14,7 @@ chmod +x /usr/local/bin/lpg-load-balancer
 
 **The rest of commands execute as the user who will run lpg-load-balancer.**
 
-Install runner as service and start it:
+Install LB as service and start it:
 
 ```bash
 cd ~

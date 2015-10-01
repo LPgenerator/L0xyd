@@ -19,7 +19,7 @@ fi
 # get USER home directory
 eval HOMEDIR=~$USER
 
-# create empty config and re-register runner
+# create empty config and re-register LB
 mkdir -p /etc/lpg-load-balancer
 chmod 0700 /etc/lpg-load-balancer
 if [ -f $HOMEDIR/config.toml ] && [ ! -f /etc/lpg-load-balancer/config.toml ]; then
@@ -32,7 +32,7 @@ fi
 lpg-load-balancer stop --service="lpg-load-balancer" >/dev/null 2>/dev/null || :
 lpg-load-balancer uninstall --service="lpg-load-balancer" >/dev/null 2>/dev/null || :
 
-# re-register runner
+# re-register LB
 lpg-load-balancer stop >/dev/null 2>/dev/null || :
 lpg-load-balancer uninstall >/dev/null 2>/dev/null || :
 lpg-load-balancer install --user=$USER --working-directory=$HOMEDIR
@@ -44,5 +44,5 @@ lpg-load-balancer install --user=$USER --working-directory=$HOMEDIR
 # ulimit -n 102400
 # /etc/security/limits.d?
 
-# start runner service
+# start LB service
 lpg-load-balancer start || :

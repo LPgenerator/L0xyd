@@ -36,7 +36,7 @@ Stop the service (you need elevated command prompt as before):
 sudo lpg-load-balancer stop
 ```
 
-Download the binary to replace runner's executable:
+Download the binary to replace LB's executable:
 
 ```bash
 wget -O /usr/local/bin/lpg-load-balancer https://lpg-load-balancer-downloads.s3.amazonaws.com/latest/binaries/lpg-load-balancer-linux-386

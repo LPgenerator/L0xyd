@@ -31,7 +31,7 @@ cd C:\lpg-load-balancer
 lpg-load-balancer stop
 ```
 
-Download the binary for [x86][] or [amd64][] and replace runner's executable.
+Download the binary for [x86][] or [amd64][] and replace LB's executable.
 
 Start service:
 

@@ -178,7 +178,7 @@ func init() {
 		installFlags = append(installFlags, cli.StringFlag{
 			Name:  "user, u",
 			Value: helpers.GetCurrentUserName(),
-			Usage: "Specify user-name to secure the runner",
+			Usage: "Specify user-name to secure the LB",
 		})
 		installFlags = append(installFlags, cli.StringFlag{
 			Name:  "password, p",
@@ -189,7 +189,7 @@ func init() {
 		installFlags = append(installFlags, cli.StringFlag{
 			Name:  "user, u",
 			Value: "",
-			Usage: "Specify user-name to secure the runner",
+			Usage: "Specify user-name to secure the LB",
 		})
 	}
 
