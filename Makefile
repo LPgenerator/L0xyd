@@ -152,7 +152,7 @@ install-ci-tools:
 
 run_ci_test:
 	@# test -f ~/gvm.inst || (make install-ci-tools && make deps && touch ~/gvm.inst)
-	@source ~/.gvm/scripts/gvm; gvm pkgset use lpg-load-balancer; go test ./... -cover
+	@source ~/.gvm/scripts/gvm; gvm use go1.4; gvm pkgset use lpg-load-balancer; go test ./... -cover
 
 session:
 	@tmux list-sessions | grep LPG-LB-WIN >& /dev/null && tmux attach -t "LPG-LB-WIN" || true
