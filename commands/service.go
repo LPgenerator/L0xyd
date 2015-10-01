@@ -130,11 +130,9 @@ func RunServiceControl(c *cli.Context) {
 		svcConfig.Arguments = append(svcConfig.Arguments, "--service", sn)
 	}
 
-	if user := c.String("user"); !isUserService && user != "" {
-		svcConfig.Arguments = append(svcConfig.Arguments, "--user", user)
-	}
-
+	/*
 	svcConfig.Arguments = append(svcConfig.Arguments, "--syslog")
+	*/
 
 	s, err := service_helpers.New(&NullService{}, svcConfig)
 	if err != nil {

@@ -4,12 +4,10 @@ import (
 	"os"
 	"io"
 	"fmt"
-	"syscall"
 	"strconv"
 	"strings"
 	"net/url"
 	"net/http"
-	"os/signal"
 	"encoding/json"
 
 	"github.com/codegangsta/cli"
@@ -22,6 +20,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/gotlium/lpg-load-balancer/common"
 	"github.com/gotlium/lpg-load-balancer/helpers"
+	service "github.com/ayufan/golang-kardianos-service"
+	"github.com/gotlium/lpg-load-balancer/helpers/service"
 )
 
 type Server struct {
@@ -30,11 +30,13 @@ type Server struct {
 }
 
 
-type LBCommand struct {
+type RunCommand struct {
 	configOptions
 
 	ListenAddr string `short:"l" long:"listen" description:"Listen address:port"`
-	// ApiAddr string `short:"a" long:"api-listen" description:"Api listen address:port"`
+	ServiceName      string `short:"n" long:"service" description:"Use different names for different services"`
+	WorkingDirectory string `short:"d" long:"working-directory" description:"Specify custom working directory"`
+	Syslog           bool   `long:"syslog" description:"Log to syslog"`
 }
 
 var LB struct {
@@ -154,48 +156,21 @@ func HandleList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
-func (c *LBCommand) Execute(context *cli.Context) {
-	err := c.loadConfig()
-	if err != nil {
-		log.Fatalln(err)
-		return
-	}
-
-	sig := make(chan os.Signal, 1)
-	signal.Notify(sig, os.Interrupt)
-	signal.Notify(sig, syscall.SIGTERM)
-	signal.Notify(sig, syscall.SIGKILL)
-	signal.Notify(sig, syscall.SIGQUIT)
-	signal.Notify(sig, syscall.SIGINT)
-	go func() {
-		<-sig
-		log.Println("Stop signal received")
-		err = c.saveConfig()
-		if err != nil {
-			log.Fatalln(err)
-		}
-		os.Exit(1)
-	}()
-
+func (mr *RunCommand) Run() {
 	go func() {
 		http.HandleFunc(
 			"/", helpers.BasicAuth(helpers.LogRequests(HandleIndex)))
-		// http.HandleFunc("/add/", helpers.LogRequests(HandleAdd))
-		// http.HandleFunc("/del/", helpers.LogRequests(HandleDel))
-		// http.HandleFunc("/list/", helpers.LogRequests(HandleList))
-
-		log.Println("LB API listen at", c.config.ApiAddress)
-		http.ListenAndServe(c.config.ApiAddress, nil)
+		log.Println("LB API listen at", mr.config.ApiAddress)
+		http.ListenAndServe(mr.config.ApiAddress, nil)
 	}()
 
 	oxyLogger := &helpers.OxyLogger{}
 	fwd_logger := forward.Logger(oxyLogger)
 	stm_logger := stream.Logger(oxyLogger)
 
-	if c.config.LbLogFile != "" {
+	if mr.config.LbLogFile != "" {
 		f, err := os.OpenFile(
-			c.config.LbLogFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+			mr.config.LbLogFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 		if err != nil {
 			log.Fatalf("error opening file: %v", err)
 		} else {
@@ -210,15 +185,15 @@ func (c *LBCommand) Execute(context *cli.Context) {
 	lb, _ := roundrobin.New(fwd)
 
 	LB.lb = lb
-	LB.config = c.config
+	LB.config = mr.config
 
 	stream, _ := stream.New(
 		lb, stm_logger, stream.Retry(
 			`IsNetworkError() && RequestMethod() == "GET" && Attempts() < 2`))
 
-	listen := c.config.LbAddress
-	if c.ListenAddr != "" {
-		listen = c.ListenAddr
+	listen := mr.config.LbAddress
+	if mr.ListenAddr != "" {
+		listen = mr.ListenAddr
 	}
 
 	s := &http.Server{
@@ -226,7 +201,7 @@ func (c *LBCommand) Execute(context *cli.Context) {
 		Handler:        stream,
 	}
 
-	for serverName, server := range c.config.Servers {
+	for serverName, server := range mr.config.Servers {
 		u, err := url.Parse(server.Url)
 		if err == nil {
 			lb.UpsertServer(u, roundrobin.Weight(server.Weight))
@@ -244,6 +219,60 @@ func (c *LBCommand) Execute(context *cli.Context) {
 }
 
 
+func (mr *RunCommand) Start(s service.Service) error {
+	if len(mr.WorkingDirectory) > 0 {
+		err := os.Chdir(mr.WorkingDirectory)
+		if err != nil {
+			return err
+		}
+	}
+
+	err := mr.loadConfig()
+	if err != nil {
+		panic(err)
+	}
+
+	go mr.Run()
+
+	return nil
+}
+
+func (mr *RunCommand) Stop(s service.Service) error {
+	log.Println("LB: requested service stop")
+	mr.saveConfig()
+	return nil
+}
+
+func (c *RunCommand) Execute(context *cli.Context) {
+	svcConfig := &service.Config{
+		Name:        c.ServiceName,
+		DisplayName: c.ServiceName,
+		Description: defaultDescription,
+		Arguments:   []string{"run"},
+	}
+
+	service, err := service_helpers.New(c, svcConfig)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	if c.Syslog {
+		logger, err := service.SystemLogger(nil)
+		if err == nil {
+			log.AddHook(&ServiceLogHook{logger})
+		} else {
+			log.Errorln(err)
+		}
+	}
+
+	err = service.Run()
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
+
 func init() {
-	common.RegisterCommand2("run",  "Run Load Balancer", &LBCommand{})
+	common.RegisterCommand2("run",  "Run Load Balancer", &RunCommand{
+		ServiceName: defaultServiceName,
+	})
 }

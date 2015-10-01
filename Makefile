@@ -32,7 +32,12 @@ register-fake-http:
 	curl -X GET --user lb:7eNQ4iWLgDw4Q6w -s http://127.0.0.1:9090 && echo
 
 help:
-	# make all => deps test lint toolchain build
+	# make run => run development server
+	# make run-http-test => run wrk benchmarking
+	# make register-fake-http => register backends
+	# make session => run development session
+	# make pull => pull updates from repo
+	# make push => push changes to repo
 	# make version - show information about current version
 	# make deps - install all dependencies
 	# make test - run project tests
@@ -105,16 +110,13 @@ package-deb-fpm:
 		--force \
 		--deb-compression bzip2 \
 		--url https://gitlab.com/gotlium/lpg-load-balancer \
-		--description "lpg-load-balancer" \
+		--description "LPgenerator simple load balancer" \
 		-m "GoTLiuM InSPiRiT <gotlium@gmail.com>" \
 		--license "GPLv3" \
 		--vendor "github.com/gotlium" \
 		--conflicts $(PACKAGE_CONFLICT) \
 		--provides lpg-load-balancer \
 		--replaces lpg-load-balancer \
-		--depends ca-certificates \
-		--depends git \
-		--deb-suggests docker \
 		-a $(PACKAGE_ARCH) \
 		packaging/root/=/ \
 		out/binaries/$(NAME)-linux-$(ARCH)=/usr/bin/lpg-load-balancer
@@ -126,7 +128,7 @@ package-rpm-fpm:
 		--rpm-compression bzip2 --rpm-os linux \
 		--force \
 		--url https://gitlab.com/gotlium/lpg-load-balancer \
-		--description "lpg-load-balancer" \
+		--description "LPgenerator simple load balancer" \
 		-m "GoTLiuM InSPiRiT <gotlium@gmail.com>" \
 		--license "GPLv3" \
 		--vendor "github.com/gotlium" \
@@ -170,19 +172,5 @@ pull:
 push:
 	@git status --porcelain|grep -v '??' && (echo '\033[0;32mCommit message:\033[0m' && MSG=`rlwrap -o -S "> " cat` && git commit -am "$$MSG") || true
 	@git push origin $(BRANCH) || (git pull origin $(BRANCH) && git push origin $(BRANCH))
-
-reset:
-	@git rev-parse --abbrev-ref HEAD|grep master >& /dev/null && false || true
-	@git reset --soft `git log --pretty=format:"%H" master.. | tail -1`
-	@git status --porcelain|grep -v '??' && (echo '\033[0;32mCommit message:\033[0m' && MSG=`rlwrap -o -S "> " cat` && git commit -am "$$MSG") || true
-	@git push origin `git rev-parse --abbrev-ref HEAD` -f
-
-pull-from-reset:
-	@git rev-parse --abbrev-ref HEAD|grep master >& /dev/null && false || true
-	@git stash
-	@git reset --hard `git log --pretty=format:"%H" master.. | tail -1`
-	@git pull origin `git rev-parse --abbrev-ref HEAD` -f
-	@test -f touch.reload && touch touch.reload || true
-
 
 FORCE:

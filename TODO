@@ -7,3 +7,6 @@
 * Auto-scaling
 * SIGTERM/Interrupt handlers
 * Tune TCP stack
+* Tests
+* Fix lint messages
+
