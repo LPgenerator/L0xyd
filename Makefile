@@ -117,6 +117,8 @@ package-deb-fpm:
 		--conflicts $(PACKAGE_CONFLICT) \
 		--provides lpg-load-balancer \
 		--replaces lpg-load-balancer \
+		--after-install packaging/root/usr/share/lpg-load-balancer/post-install \
+		--before-remove packaging/root/usr/share/lpg-load-balancer/post-install \
 		-a $(PACKAGE_ARCH) \
 		packaging/root/=/ \
 		out/binaries/$(NAME)-linux-$(ARCH)=/usr/bin/lpg-load-balancer

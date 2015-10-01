@@ -13,7 +13,7 @@ done
 # create user if doesn't exist: it will create lpg-load-balancer if not found
 if ! id -u "$USER" >/dev/null 2>/dev/null; then
   echo "lpg-load-balancer: creating $USER..."
-  useradd --shell /bin/bash --comment --create-home $USER
+  useradd --shell /bin/bash -m -d /home/$USER $USER
 fi
 
 # get USER home directory
