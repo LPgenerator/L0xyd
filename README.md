@@ -27,3 +27,18 @@ API listen port
 LB listen port
 
     lb-address = "127.0.0.1:8080"
+
+LB access log
+
+    lb-log-file = "/var/log/lpg-lb.log"
+
+Servers examples
+
+    [servers]
+      [servers.web-1]
+      url = "http://127.0.0.1:8081"
+      weight = 0
+    
+      [servers.web-2]
+      url = "http://127.0.0.1:8082"
+      weight = 0
