@@ -39,26 +39,6 @@ func Validate(username, password string) bool {
 	return false
 }
 
-func GetOnly(h handler) handler {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "GET" {
-			h(w, r)
-			return
-		}
-		http.Error(w, "GET only", http.StatusMethodNotAllowed)
-	}
-}
-
-func PostOnly(h handler) handler {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "POST" {
-			h(w, r)
-			return
-		}
-		http.Error(w, "POST only", http.StatusMethodNotAllowed)
-	}
-}
-
 func LogRequests(h handler) handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		h(w, r)

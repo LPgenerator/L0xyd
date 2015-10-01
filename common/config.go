@@ -54,7 +54,6 @@ func (c *Config) StatConfig(configFile string) error {
 func (c *Config) LoadConfig(configFile string) error {
 	info, err := os.Stat(configFile)
 
-	// permission denied is soft error
 	if os.IsNotExist(err) {
 		return nil
 	} else if err != nil {
@@ -83,11 +82,10 @@ func (c *Config) SaveConfig(configFile string) error {
 		return err
 	}
 
-	// create directory to store configuration
 	os.MkdirAll(filepath.Dir(configFile), 0700)
 
-	// write config file
-	if err := ioutil.WriteFile(configFile, newConfig.Bytes(), 0600); err != nil {
+	err := ioutil.WriteFile(configFile, newConfig.Bytes(), 0600)
+	if err != nil {
 		return err
 	}
 

@@ -13,31 +13,6 @@ type configOptions struct {
 	ConfigFile string `short:"c" long:"config" env:"CONFIG_FILE" description:"Config file"`
 }
 
-/*
-func getDefaultConfigFile() string {
-	_, etc_err := os.Stat("/etc/lpg-load-balancer/config.toml");
-
-	homeDir := helpers.GetHomeDir();
-	homeCfg := filepath.Join(homeDir, ".lpg-load-balancer", "config.toml")
-	_, home_err := os.Stat(homeCfg);
-
-	currentDir := helpers.GetCurrentWorkingDirectory();
-	currentCfg := filepath.Join(currentDir, "config.toml")
-	_, current_err := os.Stat(currentCfg);
-
-	if os.Getuid() == 0 && etc_err == nil {
-		return "/etc/lpg-load-balancer/config.toml"
-	} else if homeDir != "" && home_err == nil {
-		return homeCfg
-	} else if currentDir != "" && current_err == nil {
-		return currentCfg
-	} else {
-		return "/Users/gotlium/config.toml"
-		//panic("Cannot get default config file location")
-	}
-}
-*/
-
 func getDefaultConfigFile() string {
 	if os.Getuid() == 0 {
 		return "/etc/lpg-load-balancer/config.toml"
@@ -65,13 +40,11 @@ func (c *configOptions) loadConfig() error {
 }
 
 func (c *configOptions) touchConfig() error {
-	// try to load existing config
 	err := c.loadConfig()
 	if err != nil {
 		return err
 	}
 
-	// save config for the first time
 	if !c.config.Loaded {
 		return c.saveConfig()
 	}

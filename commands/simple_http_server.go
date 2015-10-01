@@ -10,7 +10,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gotlium/lpg-load-balancer/common"
-	"github.com/gotlium/lpg-load-balancer/helpers"
+	//"github.com/gotlium/lpg-load-balancer/helpers"
 	//"github.com/mailgun/oxy/trace"
 )
 
@@ -37,7 +37,8 @@ func HandleMain(w http.ResponseWriter, r *http.Request) {
 
 
 func (c *SHSCommand) Execute(context *cli.Context) {
-	http.HandleFunc("/", helpers.LogRequests(HandleMain))
+	// http.HandleFunc("/", helpers.LogRequests(HandleMain))
+	http.HandleFunc("/", HandleMain)
 
 	listen := ":8081"
 	if c.ListenAddr != "" {

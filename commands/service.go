@@ -119,7 +119,8 @@ func RunServiceControl(c *cli.Context) {
 	}
 
 	if wd := c.String("working-directory"); wd != "" {
-		svcConfig.Arguments = append(svcConfig.Arguments, "--working-directory", wd)
+		svcConfig.Arguments = append(
+			svcConfig.Arguments, "--working-directory", wd)
 	}
 
 	if config := c.String("config"); config != "" {
@@ -130,9 +131,7 @@ func RunServiceControl(c *cli.Context) {
 		svcConfig.Arguments = append(svcConfig.Arguments, "--service", sn)
 	}
 
-	/*
-	svcConfig.Arguments = append(svcConfig.Arguments, "--syslog")
-	*/
+	// svcConfig.Arguments = append(svcConfig.Arguments, "--syslog")
 
 	s, err := service_helpers.New(&NullService{}, svcConfig)
 	if err != nil {
