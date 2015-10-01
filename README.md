@@ -1,9 +1,11 @@
-# LPG LOAD BALANCER
+## LPG LOAD BALANCER
 
 Simple load balancer with Http API.
 
+[![Build Status](http://ci.lpgenerator.ru/projects/7/status.png?ref=master)](http://ci.lpgenerator.ru/projects/7?ref=master)
 
-## Usage
+
+### Usage
 
 Add instance to LB
 
@@ -18,7 +20,7 @@ Remove instance from LB
     curl -X DELETE --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:9090/127.0.0.1:8081
 
 
-## Default configuration
+### Default configuration
 
 API listen port
 

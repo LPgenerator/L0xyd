@@ -143,14 +143,16 @@ package-rpm-fpm:
 
 install-ci-tools:
 	bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-	gvm install go1.5.1
-	gvm use go1.5.1
+	gvm install go1.4
+	gvm use go1.4
 	gvm pkgset create lpg-load-balancer
 	gvm pkgset use lpg-load-balancer
+	go get github.com/tools/godep
+	godep restore
 
 run_ci_test:
-	@test -f gvm.inst || (make install-ci-tools && make deps && touch gvm.inst)
-	@source ~/.gvm/scripts/gvm; gvm use go1.5.1; go test ./... -cover
+	@# test -f ~/gvm.inst || (make install-ci-tools && make deps && touch ~/gvm.inst)
+	@source ~/.gvm/scripts/gvm; gvm pkgset use lpg-load-balancer; go test ./... -cover
 
 session:
 	@tmux list-sessions | grep LPG-LB-WIN >& /dev/null && tmux attach -t "LPG-LB-WIN" || true
