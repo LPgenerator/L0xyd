@@ -1,30 +1,28 @@
 package main
 
 import (
-	"os"
 	"fmt"
+	"os"
 	"path"
 	//"runtime"
 
-	"github.com/codegangsta/cli"
 	log "github.com/Sirupsen/logrus"
+	"github.com/codegangsta/cli"
 
-	"github.com/gotlium/lpg-load-balancer/common"
-	"github.com/gotlium/lpg-load-balancer/helpers"
-	_ "github.com/gotlium/lpg-load-balancer/commands"
+	_ "git.lpgenerator.ru/sys/lpg-load-balancer/commands"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 )
 
 var NAME = "lpg-load-balancer"
 var VERSION = "dev"
 var REVISION = "HEAD"
 
-
 func init() {
 	common.NAME = NAME
 	common.VERSION = VERSION
 	common.REVISION = REVISION
 }
-
 
 func main() {
 	// < Go 1.5

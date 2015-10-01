@@ -9,8 +9,8 @@ import (
 	"github.com/codegangsta/cli"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/gotlium/lpg-load-balancer/common"
-	//"github.com/gotlium/lpg-load-balancer/helpers"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
+	//"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	//"github.com/mailgun/oxy/trace"
 )
 

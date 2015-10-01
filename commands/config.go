@@ -1,8 +1,8 @@
 package commands
 
 import (
-	"github.com/gotlium/lpg-load-balancer/helpers"
-	"github.com/gotlium/lpg-load-balancer/common"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
 	"path/filepath"
 	"os"
 )

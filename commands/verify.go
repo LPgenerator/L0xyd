@@ -4,7 +4,7 @@ import (
 	"github.com/codegangsta/cli"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/gotlium/lpg-load-balancer/common"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
 )
 
 type VerifyCommand struct {

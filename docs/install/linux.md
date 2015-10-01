@@ -5,9 +5,9 @@
 Simply download one of the binaries for your system:
 
 ```bash
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/gotlium/lpg-load-balancer/releases/download/lpg-load-balancer-linux-386
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/gotlium/lpg-load-balancer/releases/download/lpg-load-balancer-linux-amd64
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/gotlium/lpg-load-balancer/releases/download/lpg-load-balancer-linux-arm
+wget -O /usr/local/bin/lpg-load-balancer https://git.lpgenerator.ru/sys/lpg-load-balancer/releases/download/lpg-load-balancer-linux-386
+wget -O /usr/local/bin/lpg-load-balancer https://git.lpgenerator.ru/sys/lpg-load-balancer/releases/download/lpg-load-balancer-linux-amd64
+wget -O /usr/local/bin/lpg-load-balancer https://git.lpgenerator.ru/sys/lpg-load-balancer/releases/download/lpg-load-balancer-linux-arm
 ```
 
 Give it permissions to execute:
@@ -41,7 +41,7 @@ Download the binary to replace LB's executable:
 ```bash
 wget -O /usr/local/bin/lpg-load-balancer https://lpg-load-balancer-downloads.s3.amazonaws.com/latest/binaries/lpg-load-balancer-linux-386
 wget -O /usr/local/bin/lpg-load-balancer https://lpg-load-balancer-downloads.s3.amazonaws.com/latest/binaries/lpg-load-balancer-linux-amd64
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/gotlium/lpg-load-balancer/releases/download/lpg-load-balancer-linux-arm
+wget -O /usr/local/bin/lpg-load-balancer https://git.lpgenerator.ru/sys/lpg-load-balancer/releases/download/lpg-load-balancer-linux-arm
 ```
 
 Give it permissions to execute:

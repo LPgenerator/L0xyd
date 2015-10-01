@@ -3,8 +3,8 @@
 Download the binary for your system:
 
 ```bash
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/gotlium/lpg-load-balancer/releases/download/lpg-load-balancer-freebsd-amd64
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/gotlium/lpg-load-balancer/releases/download/lpg-load-balancer-freebsd-386
+wget -O /usr/local/bin/lpg-load-balancer https://git.lpgenerator.ru/sys/lpg-load-balancer/releases/download/lpg-load-balancer-freebsd-amd64
+wget -O /usr/local/bin/lpg-load-balancer https://git.lpgenerator.ru/sys/lpg-load-balancer/releases/download/lpg-load-balancer-freebsd-386
 ```
 
 Give it permissions to execute:

@@ -4,11 +4,11 @@ import (
 	log "github.com/Sirupsen/logrus"
 	service "github.com/ayufan/golang-kardianos-service"
 	"github.com/codegangsta/cli"
-	"github.com/gotlium/lpg-load-balancer/common"
-	"github.com/gotlium/lpg-load-balancer/helpers"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	"os"
 	"runtime"
-	"github.com/gotlium/lpg-load-balancer/helpers/service"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
 )
 
 const (
