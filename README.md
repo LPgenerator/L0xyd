@@ -19,6 +19,10 @@ Remove instance from LB
 
     curl -X DELETE --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:9090/127.0.0.1:8081
 
+Get LB statistics
+
+    curl -X GET --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:9090/stats
+
 
 ### Default configuration
 
@@ -70,8 +74,8 @@ This project is designed for the Linux, OS X and Windows operating systems.
 
 ### Statistics
 
-* 4K+ req per sec
-* 10 MB memory usage
+* 10K+ req per sec
+* 12 MB memory usage
 
 ### Help
 

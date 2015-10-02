@@ -1,18 +1,73 @@
 # API listen port
-api-address = "0.0.0.0:8081"
+#
+# Default:
+# api-address = "0.0.0.0:8081"
 
 # LB listen port
-lb-address = "127.0.0.1:8080"
+#
+# Default:
+# lb-address = "127.0.0.1:8080"
 
 # Log all into file
-lb-log-file = "/var/log/lpg-lb.log"
+#
+# Default:
+# lb-log-file = ""
+
+# Statistics
+#
+# Default:
+# statistics-enabled = true
 
 # Default instances under Load Balancer
-[servers]
-  [servers.web-1]
-  url = "http://127.0.0.1:8081"
-  weight = 0
+# [Servers]
+#   [Servers.web-1]
+#   url = "http://127.0.0.1:8081"
+#   weight = 0
+#
+#   [Servers.web-2]
+#   url = "http://127.0.0.1:8082"
+#   weight = 0
+#
+# Default:
+# [Servers]
 
-  [servers.web-2]
-  url = "http://127.0.0.1:8082"
-  weight = 0
+#
+# Failover Predicates
+#
+# IsNetworkError()         # failover on network error
+# Attempts() <= 1          # allows only 1 failover attempt
+# RequestMethod() == "GET" # failover for GET requests only
+# ResponseCode() == 408    # failover on 408 HTTP response code
+#
+# Default:
+# stream_retry_conditions = "IsNetworkError() && Attempts() < 10"
+
+
+#
+# Circuit Breaker
+#
+# Default:
+# cbreaker_enable = false
+#
+# States:
+# NetworkErrorRatio() > 0.5      // watch error ratio over 10 second sliding widndow for a frontend
+# LatencyAtQuantileMS(50.0) > 50 // watch latency at quantile in milliseconds.
+# ResponseCodeRatio(500, 600, 0, 600) > 0.5 // ratio of response codes in range [500-600) to  [0-600)
+#
+# Default:
+# cbreaker_conditions = "NetworkErrorRatio() > 0.1"
+#
+# Default:
+# cbreaker_fallback_duration = 10
+#
+# Default:
+# cbreaker_recovery_duration = 15
+#
+# Default:
+# cbreaker_on_tripped_url = http://localhost/
+#
+# Default:
+# cbreaker_on_standby_url = http://localhost/
+#
+# Default:
+# cbreaker_check_period = 15

@@ -3,8 +3,6 @@
 * LB groups
 * Health check
 * Hook when instance is down
-* Auto-scaling
-* SIGTERM/Interrupt handlers
 * Tune TCP stack
 * Tests
 * Fix lint messages

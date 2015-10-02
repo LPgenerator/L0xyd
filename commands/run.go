@@ -4,17 +4,20 @@ import (
 	"os"
 	"io"
 	"fmt"
+	//"time"
 	"strconv"
 	"strings"
 	"net/url"
 	"net/http"
 	"encoding/json"
 
+	"github.com/thoas/stats"
 	"github.com/codegangsta/cli"
 
 	"github.com/mailgun/oxy/utils"
 	"github.com/mailgun/oxy/stream"
 	"github.com/mailgun/oxy/forward"
+	//"github.com/mailgun/oxy/cbreaker"
 	"github.com/mailgun/oxy/roundrobin"
 
 	log "github.com/Sirupsen/logrus"
@@ -22,6 +25,7 @@ import (
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	service "github.com/ayufan/golang-kardianos-service"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/statistics"
 )
 
 type Server struct {
@@ -42,6 +46,7 @@ type RunCommand struct {
 var LB struct {
 	lb *roundrobin.RoundRobin
 	config *common.Config
+	stats *stats.Stats
 }
 
 func setStatus(w http.ResponseWriter, status string) {
@@ -156,10 +161,20 @@ func HandleList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func HandleStats(w http.ResponseWriter, r *http.Request) {
+	statistics := LB.stats.Data()
+	data, err := json.MarshalIndent(statistics, "", "  ")
+	if err == nil {
+		io.WriteString(w, string(data))
+	}
+}
+
 func (mr *RunCommand) Run() {
 	go func() {
 		http.HandleFunc(
 			"/", helpers.BasicAuth(helpers.LogRequests(HandleIndex)))
+		http.HandleFunc(
+			"/stats", helpers.BasicAuth(helpers.LogRequests(HandleStats)))
 		log.Println("LB API listen at", mr.config.ApiAddress)
 		http.ListenAndServe(mr.config.ApiAddress, nil)
 	}()
@@ -181,15 +196,42 @@ func (mr *RunCommand) Run() {
 		}
 	}
 
+	stats := stats.New()
+
 	fwd, _ := forward.New(fwd_logger)
-	lb, _ := roundrobin.New(fwd)
+	// todo: enable/disable statistics on settings
+	mts, _ := statistics.New(fwd, stats)
+	lb, _ := roundrobin.New(mts)
 
 	LB.lb = lb
 	LB.config = mr.config
+	LB.stats = stats
 
+	// todo: create settings for Failover Predicates
 	stream, _ := stream.New(
-		lb, stm_logger, stream.Retry(`IsNetworkError() && Attempts() < 2`))
+		lb, stm_logger, stream.Retry(`IsNetworkError() && Attempts() < 10`))
 
+	// todo: Write own functionlity for notify anf remove failed server from LB
+	/*
+
+	// todo: create settings for CircuitBreaker
+	onStandby, _ := cbreaker.NewWebhookSideEffect(cbreaker.Webhook{
+		URL:    "http://127.0.0.1:8083",
+		Method: "GET",
+	})
+	onTripped, _ := cbreaker.NewWebhookSideEffect(cbreaker.Webhook{
+		URL:     "http://127.0.0.1:8083",
+		Method:  "POST",
+	})
+
+	cb, _ := cbreaker.New(lb, "NetworkErrorRatio() > 0.5",
+		cbreaker.Fallback(stream),
+		cbreaker.FallbackDuration(30 * time.Second),
+		cbreaker.RecoveryDuration(60 * time.Second),
+		cbreaker.OnTripped(onTripped),
+		cbreaker.OnStandby(onStandby),
+		cbreaker.CheckPeriod(30 * time.Millisecond))
+	*/
 	listen := mr.config.LbAddress
 	if mr.ListenAddr != "" {
 		listen = mr.ListenAddr

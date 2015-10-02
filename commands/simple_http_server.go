@@ -10,7 +10,7 @@ import (
 
 	log "github.com/Sirupsen/logrus"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
-	//"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	//"github.com/mailgun/oxy/trace"
 )
 
@@ -18,6 +18,7 @@ type SHSCommand struct {
 	configOptions
 
 	ListenAddr string `short:"l" long:"listen" description:"Listen address:port"`
+	StdOut     bool `short:"s" long:"stdout" description:"Log to StdOut"`
 }
 
 var SHS struct {
@@ -33,12 +34,20 @@ func HandleMain(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Connection", "Keep-Alive")
 	w.Header().Set("X-Listen", SHS.listen)
 	io.WriteString(w, fmt.Sprintf("[%s] Hello, World!", SHS.listen))
+
+	if r.Method == "POST" {
+		r.ParseForm()
+		log.Println(r.Form)
+	}
 }
 
 
 func (c *SHSCommand) Execute(context *cli.Context) {
-	// http.HandleFunc("/", helpers.LogRequests(HandleMain))
-	http.HandleFunc("/", HandleMain)
+	if c.StdOut {
+		http.HandleFunc("/", helpers.LogRequests(HandleMain))
+	} else {
+		http.HandleFunc("/", HandleMain)
+	}
 
 	listen := ":8081"
 	if c.ListenAddr != "" {
