@@ -68,6 +68,11 @@ This project is designed for the Linux, OS X and Windows operating systems.
 * [Use on FreeBSD](docs/install/freebsd.md)
 * [Install development environment](docs/development/README.md)
 
+### Statistics
+
+* 4K+ req per sec
+* 10 MB memory usage
+
 ### Help
 
 ```bash
@@ -102,3 +107,7 @@ GLOBAL OPTIONS:
    --help, -h                   Show help
    --version, -v                Print the version
 ```
+
+### License
+
+GPLv3

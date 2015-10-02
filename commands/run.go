@@ -188,8 +188,7 @@ func (mr *RunCommand) Run() {
 	LB.config = mr.config
 
 	stream, _ := stream.New(
-		lb, stm_logger, stream.Retry(
-			`IsNetworkError() && RequestMethod() == "GET" && Attempts() < 2`))
+		lb, stm_logger, stream.Retry(`IsNetworkError() && Attempts() < 2`))
 
 	listen := mr.config.LbAddress
 	if mr.ListenAddr != "" {

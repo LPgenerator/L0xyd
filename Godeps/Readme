@@ -3,9 +3,3 @@ This directory tree is generated automatically by godep.
 Please do not edit.
 
 See https://github.com/tools/godep for more information.
-
-External deps:
-go get github.com/mailgun/predicate
-go get github.com/mailgun/timetools
-go get github.com/codahale/hdrhistogram
-ln -sf `pwd` /home/gitlab_ci_runner/pkgsets/go1.4/global/src/git.lpgenerator.ru/sys/lpg-load-balancer
