@@ -1,10 +1,8 @@
 * Возможность исключить убитый инстанс, что бы небыло просадки производительности, после сообщить куда надо, что бы переподнять инстанс
 * Mirror GET requests to test server
 * LB groups
-* Health check
-* Hook when instance is down
 * Tune TCP stack
 * Tests
 * Fix lint messages
 * lb-ctl
-
+* Backup servers - резервные сервера

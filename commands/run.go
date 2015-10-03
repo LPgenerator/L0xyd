@@ -17,7 +17,6 @@ import (
 	"github.com/mailgun/oxy/utils"
 	"github.com/mailgun/oxy/stream"
 	"github.com/mailgun/oxy/forward"
-	//"github.com/mailgun/oxy/cbreaker"
 	"github.com/mailgun/oxy/roundrobin"
 
 	log "github.com/Sirupsen/logrus"
@@ -26,6 +25,7 @@ import (
 	service "github.com/ayufan/golang-kardianos-service"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/statistics"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/monitoring"
 )
 
 type Server struct {
@@ -85,11 +85,14 @@ func addServerToConfig(s string, v int) {
 	}
 }
 
-func HandleIndex(w http.ResponseWriter, r *http.Request) {
+func setHttpHeaders(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Methods", "GET, PUT, DELETE")
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Server", "lpgenerator.ru")
+}
 
+func HandleIndex(w http.ResponseWriter, r *http.Request) {
+	setHttpHeaders(w)
 	if r.Method == "PUT" {
 		HandleAdd(w, r)
 	} else if r.Method == "DELETE" {
@@ -162,11 +165,21 @@ func HandleList(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleStats(w http.ResponseWriter, r *http.Request) {
-	statistics := LB.stats.Data()
-	data, err := json.MarshalIndent(statistics, "", "  ")
+	//statistics :=
+	data, err := json.MarshalIndent(LB.stats.Data(), "", "  ")
+	setHttpHeaders(w)
 	if err == nil {
 		io.WriteString(w, string(data))
+	} else {
+		setStatus(w, "ERROR")
 	}
+}
+
+func getNextHandler(new http.Handler, old http.Handler, enabled bool) (handler http.Handler) {
+	if enabled == true {
+		return new
+	}
+	return old
 }
 
 func (mr *RunCommand) Run() {
@@ -197,41 +210,33 @@ func (mr *RunCommand) Run() {
 	}
 
 	stats := stats.New()
+	//consoleLogger := utils.NewFileLogger(os.Stdout, utils.INFO)
 
 	fwd, _ := forward.New(fwd_logger)
-	// todo: enable/disable statistics on settings
-	mts, _ := statistics.New(fwd, stats)
-	lb, _ := roundrobin.New(mts)
+	//f, _ := os.OpenFile("testlogfile", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	//trc, _ := trace.New(fwd, f)
+
+	// Statistics
+	mts_mw, _ := statistics.New(fwd, stats)
+	mts := getNextHandler(mts_mw, fwd, mr.config.LbStats)
+
+	// Monitorng
+	mon_mw, _ := monitoring.New(mts, mr.config)
+	mon := getNextHandler(mon_mw, mts, mr.config.LbMonitorBrokenBackends)
+
+	lb, _ := roundrobin.New(mon)
+
+	stream, _ := stream.New(
+		lb, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
 
 	LB.lb = lb
 	LB.config = mr.config
 	LB.stats = stats
 
-	// todo: create settings for Failover Predicates
-	stream, _ := stream.New(
-		lb, stm_logger, stream.Retry(`IsNetworkError() && Attempts() < 10`))
+	if mr.config.LbMonitorBrokenBackends {
+		go mon_mw.Start(lb)
+	}
 
-	// todo: Write own functionlity for notify anf remove failed server from LB
-	/*
-
-	// todo: create settings for CircuitBreaker
-	onStandby, _ := cbreaker.NewWebhookSideEffect(cbreaker.Webhook{
-		URL:    "http://127.0.0.1:8083",
-		Method: "GET",
-	})
-	onTripped, _ := cbreaker.NewWebhookSideEffect(cbreaker.Webhook{
-		URL:     "http://127.0.0.1:8083",
-		Method:  "POST",
-	})
-
-	cb, _ := cbreaker.New(lb, "NetworkErrorRatio() > 0.5",
-		cbreaker.Fallback(stream),
-		cbreaker.FallbackDuration(30 * time.Second),
-		cbreaker.RecoveryDuration(60 * time.Second),
-		cbreaker.OnTripped(onTripped),
-		cbreaker.OnStandby(onStandby),
-		cbreaker.CheckPeriod(30 * time.Millisecond))
-	*/
 	listen := mr.config.LbAddress
 	if mr.ListenAddr != "" {
 		listen = mr.ListenAddr

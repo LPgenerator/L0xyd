@@ -2,35 +2,34 @@
 #
 # Default:
 # api-address = "0.0.0.0:8081"
-
+#
 # LB listen port
 #
 # Default:
 # lb-address = "127.0.0.1:8080"
-
+#
 # Log all into file
 #
 # Default:
 # lb-log-file = ""
-
+#
 # Statistics
 #
 # Default:
 # statistics-enabled = true
-
+#
 # Default instances under Load Balancer
 # [Servers]
 #   [Servers.web-1]
 #   url = "http://127.0.0.1:8081"
-#   weight = 0
+#   weight = 1
 #
 #   [Servers.web-2]
 #   url = "http://127.0.0.1:8082"
-#   weight = 0
+#   weight = 1
 #
 # Default:
 # [Servers]
-
 #
 # Failover Predicates
 #
@@ -41,33 +40,58 @@
 #
 # Default:
 # stream_retry_conditions = "IsNetworkError() && Attempts() < 10"
+#
+# Web stats
+#
+# Default:
+# statistics_enabled = false
 
 
+# Monitoring
 #
-# Circuit Breaker
-#
-# Default:
-# cbreaker_enable = false
-#
-# States:
-# NetworkErrorRatio() > 0.5      // watch error ratio over 10 second sliding widndow for a frontend
-# LatencyAtQuantileMS(50.0) > 50 // watch latency at quantile in milliseconds.
-# ResponseCodeRatio(500, 600, 0, 600) > 0.5 // ratio of response codes in range [500-600) to  [0-600)
+# Enable monitoring
 #
 # Default:
-# cbreaker_conditions = "NetworkErrorRatio() > 0.1"
+# monitor_broken_backend = false
+#
+# Remove broken backend
 #
 # Default:
-# cbreaker_fallback_duration = 10
+# remove_broken_backends = true
+#
+# Time to check (in sec)
 #
 # Default:
-# cbreaker_recovery_duration = 15
+# check_period = 1
+#
+# Max fails
+# Sets the number of unsuccessful attempts to communicate with the server
+# that should happen in the duration set by the fail_timeout parameter
+# to consider the server unavailable for a duration also set by the
+# fail_timeout parameter. By default, the number of unsuccessful attempts
+# is set to 1. The zero value disables the accounting of attempts.
+# What is considered an unsuccessful attempt is defined by the next_upstream
 #
 # Default:
-# cbreaker_on_tripped_url = http://localhost/
+# max_fails = 10s
+#
+# Fail timeout (in sec)
+# Sets the time during which the specified number of unsuccessful attempts
+# to communicate with the server should happen to consider the server
+# unavailable; and the period of time the server will be considered unavailable
 #
 # Default:
-# cbreaker_on_standby_url = http://localhost/
+# fail_timeout = 10
+#
+#
+# Hooks
+#
+# Call script after removing backend
 #
 # Default:
-# cbreaker_check_period = 15
+# bash_script = ""
+#
+# Call Url after removing backend
+#
+# Default:
+# web_url = ""

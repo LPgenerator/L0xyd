@@ -1,7 +1,6 @@
 package statistics
 
 import (
-	//"fmt"
 	"net/http"
 	"github.com/thoas/stats"
 	"github.com/mailgun/oxy/utils"
@@ -25,8 +24,6 @@ func (s *Statistics) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("X-A", "LP-LB")
 	beginning, _ := s.stats.Begin(w)
 	pw := &utils.ProxyWriter{W: w}
-
 	s.next.ServeHTTP(pw, r)
 	s.stats.EndWithStatus(beginning, pw.Code)
-	//fmt.Println(pw.Code)
 }

@@ -25,10 +25,21 @@ type Server struct {
 }
 
 type BaseConfig struct {
-	ApiAddress string         `toml:"api-address" json:"api-address"`
-	LbAddress  string         `toml:"lb-address" json:"lb-address"`
-	LbLogFile  string         `toml:"lb-log-file" json:"lb-log-file"`
-	Servers map[string]Server
+	ApiAddress                     string  `toml:"api-address"`
+	LbAddress                      string  `toml:"lb-address"`
+	LbLogFile                      string  `toml:"lb-log-file"`
+
+	LbStreamRetryConditions        string  `toml:"stream_retry_conditions"`
+	LbMonitorBrokenBackends        bool    `toml:"monitor_broken_backend"`
+	LbMonitorRemoveBrokenBackends  bool    `toml:"remove_broken_backends"`
+	LbStats                        bool    `toml:"statistics_enabled"`
+	LbMonitorCheckPeriod           int     `toml:"check_period"`
+	LbMonitorMaxFails              int     `toml:"max_fails"`
+	LbMonitorFailTimeout           int     `toml:"fail_timeout"`
+	LbMonitorBashScript            string  `toml:"bash_script" json:"bash_script"`
+	LbMonitorWebUrl                string  `toml:"web_url" json:"web_url"`
+
+	Servers    map[string]Server
 }
 
 
@@ -38,6 +49,17 @@ func NewConfig() *Config {
 			ApiAddress: "0.0.0.0:9090",
 			LbAddress: "127.0.0.1:8080",
 			LbLogFile: "",
+
+			LbStreamRetryConditions: `IsNetworkError() && Attempts() < 10`,
+			LbMonitorBrokenBackends: false,
+			LbMonitorRemoveBrokenBackends: true,
+			LbMonitorCheckPeriod: 1,
+			LbMonitorMaxFails: 10,
+			LbMonitorFailTimeout: 10,
+			LbMonitorBashScript: "",
+			LbMonitorWebUrl: "",
+			LbStats: false,
+
 			Servers: make(map[string]Server),
 		},
 	}
