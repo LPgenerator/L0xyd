@@ -36,9 +36,13 @@ type BaseConfig struct {
 	LbMonitorCheckPeriod           int     `toml:"check_period"`
 	LbMonitorMaxFails              int     `toml:"max_fails"`
 	LbMonitorFailTimeout           int     `toml:"fail_timeout"`
-	LbMonitorBashScript            string  `toml:"bash_script" json:"bash_script"`
-	LbMonitorWebUrl                string  `toml:"web_url" json:"web_url"`
+	LbMonitorBashScript            string  `toml:"bash_script"`
+	LbMonitorWebUrl                string  `toml:"web_url"`
 	LbEnableRebalancer             bool    `toml:"enable_rebalancer"`
+
+	LbEnableConnlimit              bool    `toml:"enable_connlimit"`
+	LbConnlimitConnections         int     `toml:"connlimit_connections"`
+	LbConnlimitVariable            string  `toml:"connlimit_variable"`
 
 	Servers    map[string]Server
 }
@@ -61,6 +65,9 @@ func NewConfig() *Config {
 			LbMonitorBashScript: "",
 			LbMonitorWebUrl: "",
 			LbStats: false,
+			LbEnableConnlimit: false,
+			LbConnlimitConnections: 10,
+			LbConnlimitVariable: `client.ip`,
 
 			Servers: make(map[string]Server),
 		},

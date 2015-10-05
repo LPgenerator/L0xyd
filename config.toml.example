@@ -95,9 +95,25 @@
 # Default:
 # web_url = ""
 
+
 # Rebalancer
 #
 # Rebalancer will readjust load balancer weights based on error ratios
 #
 # Default:
 # enable_rebalancer = false
+
+
+
+# Connection Limits
+#
+# Connection limits control the amount of simultaneous connections per backend.
+#
+# Default:
+# enable_connlimit = false
+#
+# Default:
+# connlimit_connections = 10
+#
+# Default:
+# connlimit_variable = "client.ip" // 'client.ip' or 'request.header.X-My-Header'

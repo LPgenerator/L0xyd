@@ -17,6 +17,7 @@ import (
 	"github.com/mailgun/oxy/utils"
 	"github.com/mailgun/oxy/stream"
 	"github.com/mailgun/oxy/forward"
+	"github.com/mailgun/oxy/connlimit"
 	"github.com/mailgun/oxy/roundrobin"
 
 	log "github.com/Sirupsen/logrus"
@@ -196,7 +197,7 @@ func (mr *RunCommand) Run() {
 	oxyLogger := &helpers.OxyLogger{}
 	fwd_logger := forward.Logger(oxyLogger)
 	stm_logger := stream.Logger(oxyLogger)
-	//rb_logger := roundrobin.RebalancerLogger(oxyLogger)
+	rb_logger := roundrobin.RebalancerLogger(oxyLogger)
 
 	if mr.config.LbLogFile != "" {
 		f, err := os.OpenFile(
@@ -207,7 +208,7 @@ func (mr *RunCommand) Run() {
 			fileLogger := utils.NewFileLogger(f, utils.INFO)
 			fwd_logger = forward.Logger(fileLogger)
 			stm_logger = stream.Logger(fileLogger)
-			//rb_logger := roundrobin.RebalancerLogger(fileLogger)
+			rb_logger = roundrobin.RebalancerLogger(fileLogger)
 			defer f.Close()
 		}
 	}
@@ -219,26 +220,32 @@ func (mr *RunCommand) Run() {
 	//f, _ := os.OpenFile("testlogfile", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	//trc, _ := trace.New(fwd, f)
 
-	// Statistics
+	// Statistics Middleware
 	mts_mw, _ := statistics.New(fwd, stats)
 	mts := getNextHandler(mts_mw, fwd, mr.config.LbStats, "Statistics")
 
-	// Monitorng
+	// Monitorng Middleware
 	mon_mw, _ := monitoring.New(mts, mr.config)
 	mon := getNextHandler(
 		mon_mw, mts, mr.config.LbMonitorBrokenBackends, "Monitoring")
 
 	lb, _ := roundrobin.New(mon)
 
-	// Rebalancer
-	rb_mw, _ := roundrobin.NewRebalancer(lb)
+	// Rebalancer Middleware
+	rb_mw, _ := roundrobin.NewRebalancer(lb, rb_logger)
 	rb := getNextHandler(
 		rb_mw, lb, mr.config.LbEnableRebalancer, "Rebalancer")
 
-	stream, _ := stream.New(
-		rb, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
+	// Connection Limits Middleware
+	extract, _ := utils.NewExtractor(mr.config.LbConnlimitVariable)
+	cl_mw, _ := connlimit.New(
+		rb, extract, int64(mr.config.LbConnlimitConnections))
+	cl := getNextHandler(
+		cl_mw, rb, mr.config.LbEnableConnlimit, "Connection Limits")
 
-	//todo: connlimit mw
+	stream, _ := stream.New(
+		cl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
+
 	//todo: ratelimit mw
 	//todo: trace mw
 	//todo: memetrics mw
