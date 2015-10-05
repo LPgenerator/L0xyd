@@ -4,7 +4,8 @@ import (
 	"os"
 	"io"
 	"fmt"
-	//"time"
+	"time"
+	//"bytes"
 	"strconv"
 	"strings"
 	"net/url"
@@ -15,9 +16,11 @@ import (
 	"github.com/codegangsta/cli"
 
 	"github.com/mailgun/oxy/utils"
+	"github.com/mailgun/oxy/trace"
 	"github.com/mailgun/oxy/stream"
 	"github.com/mailgun/oxy/forward"
 	"github.com/mailgun/oxy/connlimit"
+	"github.com/mailgun/oxy/ratelimit"
 	"github.com/mailgun/oxy/roundrobin"
 
 	log "github.com/Sirupsen/logrus"
@@ -25,7 +28,7 @@ import (
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	service "github.com/ayufan/golang-kardianos-service"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/mirror"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/mirroring"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/statistics"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/monitoring"
 )
@@ -49,7 +52,7 @@ var LB struct {
 	lb      *roundrobin.RoundRobin
 	config  *common.Config
 	stats   *stats.Stats
-	mirror  *mirror.Mirror
+	mirror  *mirror.Mirroring
 }
 
 func setStatus(w http.ResponseWriter, status string) {
@@ -233,14 +236,19 @@ func (mr *RunCommand) Run() {
 	//consoleLogger := utils.NewFileLogger(os.Stdout, utils.INFO)
 
 	fwd, _ := forward.New(fwd_logger)
-	//f, _ := os.OpenFile("testlogfile", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-	//trc, _ := trace.New(fwd, f)
 
-	mrr, _ := mirror.New(fwd)
+	// Trace mw
+	trc_log, _ := os.OpenFile(
+		mr.config.LbTaceFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+	trc_mw, _ := trace.New(fwd, trc_log)
+	trc := getNextHandler(trc_mw, fwd, mr.config.LbEnableTace, "Trace")
+
+	mrr_mw, _ := mirror.New(trc)
+	mrr := getNextHandler(mrr_mw, trc, mr.config.LbStats, "Mirroring")
 
 	// Statistics Middleware
 	mts_mw, _ := statistics.New(mrr, stats)
-	mts := getNextHandler(mts_mw, fwd, mr.config.LbStats, "Statistics")
+	mts := getNextHandler(mts_mw, mrr, mr.config.LbStats, "Statistics")
 
 	// Monitorng Middleware
 	mon_mw, _ := monitoring.New(mts, mr.config)
@@ -261,15 +269,25 @@ func (mr *RunCommand) Run() {
 	cl := getNextHandler(
 		cl_mw, rb, mr.config.LbEnableConnlimit, "Connection Limits")
 
-	stream, _ := stream.New(
-		cl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
-
 	//todo: ratelimit mw
+	defaultRates := ratelimit.NewRateSet()
+	defaultRates.Add(
+		time.Duration(mr.config.LbRatelimitPeriodSeconds) * time.Second,
+		int64(mr.config.LbRatelimitRequests),
+		int64(mr.config.LbRatelimitBurst))
+	extractor, _ := utils.NewExtractor(mr.config.LbRatelimitVariable)
+	rl_mw, _ := ratelimit.New(cl, extractor, defaultRates)
+	rl := getNextHandler(
+		rl_mw, cl, mr.config.LbEnableRatelimit, "Rate Limits")
+
+	stream, _ := stream.New(
+		rl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
+
 	//todo: trace mw
 	//todo: memetrics mw
 
 	LB.lb = lb
-	LB.mirror = mrr
+	LB.mirror = mrr_mw
 	LB.config = mr.config
 	LB.stats = stats
 
@@ -295,7 +313,7 @@ func (mr *RunCommand) Run() {
 				"LB: %s (Url=%s, Weight=%d) was added.",
 				serverName, server.Url, server.Weight)
 		} else if err == nil && server.Type == "mirror" {
-			mrr.Add(server.Url)
+			mrr_mw.Add(server.Url)
 		}
 	}
 

@@ -9,7 +9,7 @@ import (
 	"github.com/mailgun/oxy/utils"
 )
 
-type Mirror struct {
+type Mirroring struct {
 	next       http.Handler
 	mirrors    []string
 	rewriter    ReqRewriter
@@ -19,14 +19,14 @@ type ReqRewriter interface {
 	Rewrite(r *http.Request)
 }
 
-func New(next http.Handler) (*Mirror, error) {
-	strm := &Mirror{
+func New(next http.Handler) (*Mirroring, error) {
+	strm := &Mirroring{
 		next: next,
 	}
 	return strm, nil
 }
 
-func (m *Mirror) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+func (m *Mirroring) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(m.mirrors)
 	pw := &utils.ProxyWriter{W: w}
 	if r.Method == "GET" || r.Method == "HEAD" {
@@ -38,7 +38,7 @@ func (m *Mirror) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.next.ServeHTTP(pw, r)
 }
 
-func (m *Mirror) mirrorRequest(backend string, w http.ResponseWriter, req *http.Request) {
+func (m *Mirroring) mirrorRequest(backend string, w http.ResponseWriter, req *http.Request) {
 	outReq := new(http.Request)
 	*outReq = *req
 
@@ -64,11 +64,11 @@ func (m *Mirror) mirrorRequest(backend string, w http.ResponseWriter, req *http.
 }
 
 
-func (m *Mirror) Add(mirror string) {
+func (m *Mirroring) Add(mirror string) {
 	m.mirrors = append(m.mirrors, mirror)
 }
 
-func (m *Mirror) Del(mirror string) {
+func (m *Mirroring) Del(mirror string) {
     for i, url := range m.mirrors {
 		if url == mirror {
 			m.mirrors = append(m.mirrors[:i], m.mirrors[i+1:]...)

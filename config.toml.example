@@ -24,6 +24,12 @@
 # Default:
 # statistics-enabled = true
 #
+# Default:
+# enable-trace = false
+#
+# trace-file = "/tmp/lb.trace.log"
+#
+#
 # Default instances under Load Balancer
 # [Servers]
 #   [Servers.web-1]
@@ -46,12 +52,12 @@
 # ResponseCode() == 408    # failover on 408 HTTP response code
 #
 # Default:
-# stream_retry_conditions = "IsNetworkError() && Attempts() < 10"
+# stream-retry-conditions = "IsNetworkError() && Attempts() < 10"
 #
 # Web stats
 #
 # Default:
-# statistics_enabled = false
+# statistics-enabled = false
 
 
 # Monitoring
@@ -59,27 +65,27 @@
 # Enable monitoring
 #
 # Default:
-# monitor_broken_backend = false
+# monitor-broken-backend = false
 #
 # Remove broken backend
 #
 # Default:
-# remove_broken_backends = true
+# remove-broken-backends = true
 #
 # Time to check (in sec)
 #
 # Default:
-# check_period = 1
+# check-period = 1
 #
 # Max fails
 # Sets the number of unsuccessful attempts to communicate with the server
-# that should happen in the duration set by the fail_timeout parameter
+# that should happen in the duration set by the fail-timeout parameter
 # to consider the server unavailable for a duration also set by the
-# fail_timeout parameter. By default, the number of unsuccessful attempts
+# fail-timeout parameter. By default, the number of unsuccessful attempts
 # is set to 1.
 #
 # Default:
-# max_fails = 1
+# max-fails = 1
 #
 # Fail timeout (in sec)
 # Sets the time during which the specified number of unsuccessful attempts
@@ -87,7 +93,7 @@
 # unavailable; and the period of time the server will be considered unavailable
 #
 # Default:
-# fail_timeout = 10
+# fail-timeout = 10
 #
 #
 # Hooks
@@ -95,12 +101,12 @@
 # Call script after removing backend
 #
 # Default:
-# bash_script = ""
+# bash-script = ""
 #
 # Call Url after removing backend
 #
 # Default:
-# web_url = ""
+# web-url = ""
 
 
 # Rebalancer
@@ -108,7 +114,7 @@
 # Rebalancer will readjust load balancer weights based on error ratios
 #
 # Default:
-# enable_rebalancer = false
+# enable-rebalancer = false
 
 
 # Connection Limits
@@ -116,10 +122,34 @@
 # Connection limits control the amount of simultaneous connections per backend.
 #
 # Default:
-# enable_connlimit = false
+# enable-connlimit = false
 #
 # Default:
-# connlimit_connections = 10
+# connlimit-connections = 10
 #
 # Default:
-# connlimit_variable = "client.ip" // 'client.ip' or 'request.header.X-My-Header'
+# connlimit-variable = "client.ip" // 'client.ip' or 'request.header.X-My-Header'
+
+
+# Rate Limits
+#
+# Rate controls how many requests per period of time is allowed for a location.
+#
+# Default:
+# enable-ratelimit = false
+#
+# Allowed average requests
+# Default:
+# ratelimit-requests = 1
+#
+# Period in seconds, e.g. 3600 to set up hourly rates
+# Default:
+# ratelimit-period-seconds = 1
+#
+# Default:
+# Burst count, allowes some extra variance for requests exceeding the average rate
+# ratelimit-burst = 3
+#
+# Variable defines how the limiting should be done. e.g. 'client.ip' or 'request.header.X-My-Header'
+# Default:
+# ratelimit-variable = "client.ip" // 'client.ip' or 'request.header.X-My-Header'

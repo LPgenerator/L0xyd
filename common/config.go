@@ -31,21 +31,29 @@ type BaseConfig struct {
 	LbApiPassword                  string  `toml:"api-password"`
 	LbAddress                      string  `toml:"lb-address"`
 	LbLogFile                      string  `toml:"lb-log-file"`
+	LbEnableTace                   bool    `toml:"enable-trace"`
+	LbTaceFile                     string  `toml:"trace-file"`
+	LbEnableRebalancer             bool    `toml:"enable-rebalancer"`
 
-	LbStreamRetryConditions        string  `toml:"stream_retry_conditions"`
-	LbMonitorBrokenBackends        bool    `toml:"monitor_broken_backend"`
-	LbMonitorRemoveBrokenBackends  bool    `toml:"remove_broken_backends"`
-	LbStats                        bool    `toml:"statistics_enabled"`
-	LbMonitorCheckPeriod           int     `toml:"check_period"`
-	LbMonitorMaxFails              int     `toml:"max_fails"`
-	LbMonitorFailTimeout           int     `toml:"fail_timeout"`
-	LbMonitorBashScript            string  `toml:"bash_script"`
-	LbMonitorWebUrl                string  `toml:"web_url"`
-	LbEnableRebalancer             bool    `toml:"enable_rebalancer"`
+	LbStreamRetryConditions        string  `toml:"stream-retry-conditions"`
+	LbMonitorBrokenBackends        bool    `toml:"monitor-broken-backend"`
+	LbMonitorRemoveBrokenBackends  bool    `toml:"remove-broken-backends"`
+	LbStats                        bool    `toml:"statistics-enabled"`
+	LbMonitorCheckPeriod           int     `toml:"check-period"`
+	LbMonitorMaxFails              int     `toml:"max-fails"`
+	LbMonitorFailTimeout           int     `toml:"fail-timeout"`
+	LbMonitorBashScript            string  `toml:"bash-script"`
+	LbMonitorWebUrl                string  `toml:"web-url"`
 
-	LbEnableConnlimit              bool    `toml:"enable_connlimit"`
-	LbConnlimitConnections         int     `toml:"connlimit_connections"`
-	LbConnlimitVariable            string  `toml:"connlimit_variable"`
+	LbEnableConnlimit              bool    `toml:"enable-connlimit"`
+	LbConnlimitConnections         int     `toml:"connlimit-connections"`
+	LbConnlimitVariable            string  `toml:"connlimit-variable"`
+
+	LbEnableRatelimit              bool    `toml:"enable-ratelimit"`
+	LbRatelimitRequests            int     `toml:"ratelimit-requests"`
+	LbRatelimitPeriodSeconds       int     `toml:"ratelimit-period-seconds"`
+	LbRatelimitBurst               int     `toml:"ratelimit-burst"`
+	LbRatelimitVariable            string  `toml:"ratelimit-variable"`
 
 	Servers    map[string]Server
 }
@@ -58,6 +66,8 @@ func NewConfig() *Config {
 			LbApiPassword: "7eNQ4iWLgDw4Q6w",
 			LbAddress: "127.0.0.1:8080",
 			LbLogFile: "",
+			LbEnableTace: false,
+			LbTaceFile: "/tmp/lb.trace.log",
 
 			LbStreamRetryConditions: `IsNetworkError() && Attempts() < 10`,
 			LbMonitorBrokenBackends: false,
@@ -72,6 +82,11 @@ func NewConfig() *Config {
 			LbEnableConnlimit: false,
 			LbConnlimitConnections: 10,
 			LbConnlimitVariable: `client.ip`,
+			LbEnableRatelimit: false,
+			LbRatelimitRequests: 1,
+			LbRatelimitPeriodSeconds: 1,
+			LbRatelimitBurst: 3,
+			LbRatelimitVariable: `client.ip`,
 
 			Servers: make(map[string]Server),
 		},
