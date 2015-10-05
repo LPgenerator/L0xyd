@@ -1,15 +1,15 @@
 package common
 
 import (
+	"os"
+	"time"
 	"bufio"
 	"bytes"
 	"io/ioutil"
-	"os"
-	"time"
+	"path/filepath"
 
 	"github.com/BurntSushi/toml"
 	log "github.com/Sirupsen/logrus"
-	"path/filepath"
 )
 
 
@@ -22,6 +22,7 @@ type Config struct {
 type Server struct {
 	Url           string
 	Weight        int
+	Type          string
 }
 
 type BaseConfig struct {
@@ -48,7 +49,6 @@ type BaseConfig struct {
 
 	Servers    map[string]Server
 }
-
 
 func NewConfig() *Config {
 	return &Config{

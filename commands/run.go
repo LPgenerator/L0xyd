@@ -25,6 +25,7 @@ import (
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	service "github.com/ayufan/golang-kardianos-service"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/mirror"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/statistics"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/monitoring"
 )
@@ -45,9 +46,10 @@ type RunCommand struct {
 }
 
 var LB struct {
-	lb *roundrobin.RoundRobin
-	config *common.Config
-	stats *stats.Stats
+	lb      *roundrobin.RoundRobin
+	config  *common.Config
+	stats   *stats.Stats
+	mirror  *mirror.Mirror
 }
 
 func setStatus(w http.ResponseWriter, status string) {
@@ -65,11 +67,12 @@ func removeServerFromConfig(s string) {
 	for serverName, server := range LB.config.Servers {
 		if server.Url == fmt.Sprintf("http://%s", s) {
 			delete(LB.config.Servers, serverName)
+			LB.mirror.Del("http://" + s)
 		}
 	}
 }
 
-func addServerToConfig(s string, v int) {
+func addServerToConfig(s string, v int, t string) {
 	counter := 1
 	for {
 		val := LB.config.Servers[fmt.Sprintf("web-%d", counter)]
@@ -83,6 +86,10 @@ func addServerToConfig(s string, v int) {
 	LB.config.Servers[web] = common.Server{
 		Url: "http://" + s,
 		Weight: v,
+		Type: t,
+	}
+	if t == "mirror" {
+		LB.mirror.Add("http://" + s)
 	}
 }
 
@@ -101,12 +108,12 @@ func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	} else {
 		HandleList(w, r)
 	}
-
 }
 
 func HandleAdd(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	s := r.Form.Get("url")
+	t := r.Form.Get("type")
 	v, err := strconv.Atoi(r.Form.Get("weight"))
 	if err != nil { v = 0 }
 	if s != "" {
@@ -114,12 +121,16 @@ func HandleAdd(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			setStatus(w, "ERROR")
 		} else {
-			if err := LB.lb.UpsertServer(u, roundrobin.Weight(v)); err != nil {
+			var err error = nil
+			if t == "" || t == "standard" {
+				err = LB.lb.UpsertServer(u, roundrobin.Weight(v));
+			}
+			if  err != nil {
 				setStatus(w, "ERROR")
 				log.Errorf("failed to add %s, err: %s", s, err)
 			} else {
 				removeServerFromConfig(s)
-				addServerToConfig(s, v)
+				addServerToConfig(s, v, t)
 				setStatus(w, "OK")
 				log.Infof("%s was added. weight: %d", s, v)
 			}
@@ -136,7 +147,14 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			setStatus(w, "ERROR")
 		} else {
-			if err := LB.lb.RemoveServer(u); err != nil {
+			srv_type := "standard"
+			for _, server := range LB.config.Servers {
+				if server.Url == fmt.Sprintf("http://%s", s[1]) {
+					srv_type = server.Type
+				}
+			}
+			err := LB.lb.RemoveServer(u)
+			if (srv_type == "standard" || srv_type == "") && err != nil {
 				setStatus(w, "ERROR")
 				log.Errorf("failed to remove %s, err: %v", s[1], err)
 			} else {
@@ -151,13 +169,7 @@ func HandleDel(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleList(w http.ResponseWriter, r *http.Request) {
-	servers := []Server{}
-	for _, url := range LB.lb.Servers() {
-		w, _ := LB.lb.ServerWeight(url)
-		servers = append(servers,  Server{Url: url.String(), Weight: w})
-	}
-
-	data, err := json.Marshal(servers)
+	data, err := json.Marshal(LB.config.Servers)
 	if err == nil {
 		io.WriteString(w, string(data))
 	} else {
@@ -166,7 +178,6 @@ func HandleList(w http.ResponseWriter, r *http.Request) {
 }
 
 func HandleStats(w http.ResponseWriter, r *http.Request) {
-	//statistics :=
 	data, err := json.MarshalIndent(LB.stats.Data(), "", "  ")
 	setHttpHeaders(w)
 	if err == nil {
@@ -225,8 +236,10 @@ func (mr *RunCommand) Run() {
 	//f, _ := os.OpenFile("testlogfile", os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	//trc, _ := trace.New(fwd, f)
 
+	mrr, _ := mirror.New(fwd)
+
 	// Statistics Middleware
-	mts_mw, _ := statistics.New(fwd, stats)
+	mts_mw, _ := statistics.New(mrr, stats)
 	mts := getNextHandler(mts_mw, fwd, mr.config.LbStats, "Statistics")
 
 	// Monitorng Middleware
@@ -256,6 +269,7 @@ func (mr *RunCommand) Run() {
 	//todo: memetrics mw
 
 	LB.lb = lb
+	LB.mirror = mrr
 	LB.config = mr.config
 	LB.stats = stats
 
@@ -275,11 +289,13 @@ func (mr *RunCommand) Run() {
 
 	for serverName, server := range mr.config.Servers {
 		u, err := url.Parse(server.Url)
-		if err == nil {
+		if (err == nil && server.Type == "standard") || server.Type == ""  {
 			lb.UpsertServer(u, roundrobin.Weight(server.Weight))
 			log.Printf(
 				"LB: %s (Url=%s, Weight=%d) was added.",
 				serverName, server.Url, server.Weight)
+		} else if err == nil && server.Type == "mirror" {
+			mrr.Add(server.Url)
 		}
 	}
 

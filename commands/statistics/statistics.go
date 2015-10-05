@@ -16,7 +16,6 @@ func New(next http.Handler, sts *stats.Stats) (*Statistics, error) {
 		next: next,
 		stats: sts,
 	}
-	//fmt.Println(stats_obj)
 	return strm, nil
 }
 

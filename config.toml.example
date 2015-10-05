@@ -29,6 +29,7 @@
 #   [Servers.web-1]
 #   url = "http://127.0.0.1:8081"
 #   weight = 1
+#   type = "down"      # standard/mirror/backup/down; default: standard
 #
 #   [Servers.web-2]
 #   url = "http://127.0.0.1:8082"

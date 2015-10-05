@@ -5,6 +5,7 @@ import (
 	"io"
 	"fmt"
 	"net/http"
+	"net/http/httputil"
 
 	"github.com/codegangsta/cli"
 
@@ -24,6 +25,24 @@ var SHS struct {
 	listen string
 }
 
+
+func captureHeaders(in http.Header, headers []string) http.Header {
+	if len(headers) == 0 || in == nil {
+		return nil
+	}
+	out := make(http.Header, len(headers))
+	for _, h := range headers {
+		vals, ok := in[h]
+		if !ok || len(out[h]) != 0 {
+			continue
+		}
+		for i := range vals {
+			out.Add(h, vals[i])
+		}
+	}
+	return out
+}
+
 func HandleMain(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.Header().Set("Cache-control", `no-cache="set-cookie"`)
@@ -38,6 +57,8 @@ func HandleMain(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 		log.Println(r.Form)
 	}
+	data, _ := httputil.DumpRequest(r, true)
+	log.Print(string(data))
 }
 
 
