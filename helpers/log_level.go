@@ -1,9 +1,9 @@
 package helpers
 
 import (
-	log "github.com/Sirupsen/logrus"
-	"github.com/codegangsta/cli"
 	"os"
+	"github.com/codegangsta/cli"
+	log "github.com/Sirupsen/logrus"
 )
 
 func SetupLogLevelOptions(app *cli.App) {

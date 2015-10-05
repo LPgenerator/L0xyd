@@ -26,7 +26,6 @@ func GetHomeDir() string {
 	if err == nil {
 		return u.HomeDir
 	}
-
 	homeDir := os.Getenv("HOME")
 	return homeDir
 }

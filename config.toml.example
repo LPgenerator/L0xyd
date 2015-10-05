@@ -140,7 +140,7 @@
 # ratelimit-period-seconds = 1
 #
 # Default:
-# Burst count, allowes some extra variance for requests exceeding the average rate
+# Burst count, allowed some extra variance for requests exceeding the average rate
 # ratelimit-burst = 3
 #
 # Variable defines how the limiting should be done. e.g. 'client.ip' or 'request.header.X-My-Header'

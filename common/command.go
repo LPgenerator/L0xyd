@@ -1,8 +1,8 @@
 package common
 
 import (
-	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
+	log "github.com/Sirupsen/logrus"
 	"gitlab.com/ayufan/golang-cli-helpers"
 )
 
