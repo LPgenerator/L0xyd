@@ -1,8 +1,8 @@
-* Возможность исключить убитый инстанс, что бы небыло просадки производительности, после сообщить куда надо, что бы переподнять инстанс
+* lb-ctl
 * Mirror GET requests to test server
 * LB groups
-* Tune TCP stack
+* Tune OS TCP Stack
 * Tests
 * Fix lint messages
-* lb-ctl
 * Backup servers - резервные сервера
+* config on docs

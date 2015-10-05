@@ -94,7 +94,7 @@ func setHttpHeaders(w http.ResponseWriter) {
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	setHttpHeaders(w)
-	if r.Method == "PUT" {
+	if r.Method == "PUT" || r.Method == "POST" {
 		HandleAdd(w, r)
 	} else if r.Method == "DELETE" {
 		HandleDel(w, r)

@@ -24,6 +24,25 @@ Get LB statistics
     curl -X GET --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:9090/stats
 
 
+### Control
+
+Add instance to LB
+
+    lpg-load-balancer ctl -a add -b 127.0.0.1:8081
+
+List all instances under LB
+
+    lpg-load-balancer ctl -a list
+
+Remove instance from LB
+
+    lpg-load-balancer ctl -a delete -b 127.0.0.1:8081
+
+Get LB statistics
+
+    lpg-load-balancer ctl -a stats
+
+
 ### Default configuration
 
 API listen port

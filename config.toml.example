@@ -104,7 +104,6 @@
 # enable_rebalancer = false
 
 
-
 # Connection Limits
 #
 # Connection limits control the amount of simultaneous connections per backend.
