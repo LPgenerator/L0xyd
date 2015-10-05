@@ -9,10 +9,7 @@ import (
 )
 
 var (
-	startTime       = time.Now()
-	totalRequests   = 0
-	successRequests = 0
-	errorRequests   = 0
+	startTime = time.Now()
 )
 
 const (
@@ -128,8 +125,8 @@ func FileSize(s int64) string {
 }
 
 var sysStatus struct {
-	Uptime            string
-	NumGoroutine      int
+	Uptime             string
+	NumGoroutine       int
 
 	// General statistics.
 	MemAllocated       string // bytes allocated and still in use
@@ -148,8 +145,8 @@ var sysStatus struct {
 	HeapObjects        uint64 // total number of allocated objects
 
 	// Low-level fixed-size structure allocator statistics.
-	//	Inuse is bytes used now.
-	//	Sys is bytes obtained from system.
+	// Inuse is bytes used now.
+	// Sys is bytes obtained from system.
 	StackInuse         string // bootstrap stacks
 	StackSys           string
 	MSpanInuse         string // mspan structures

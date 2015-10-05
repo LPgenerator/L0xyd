@@ -79,11 +79,11 @@ Servers examples
 
 ### Contributing
 
-The official repository for this project is on [Github.com](https://github.com/gotlium/lpg-load-balancer).
+The official repository for this project is on [Github.com](https://github.com/LPgenerator/lpg-load-balancer).
 
 * [Development](docs/development/README.md)
-* [Issues](https://github.com/gotlium/lpg-load-balancer/issues)
-* [Pull Requests](https://github.com/gotlium/lpg-load-balancer/pulls)
+* [Issues](https://github.com/LPgenerator/lpg-load-balancer/issues)
+* [Pull Requests](https://github.com/LPgenerator/lpg-load-balancer/pulls)
 
 
 ### Requirements
@@ -102,7 +102,7 @@ This project is designed for the Linux, OS X and Windows operating systems.
 ### Statistics
 
 * 10K+ req per sec
-* 12 MB memory usage
+* 16 MB memory usage
 
 ### Help
 

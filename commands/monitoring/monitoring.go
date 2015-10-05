@@ -12,7 +12,7 @@ import (
 	"github.com/mailgun/oxy/utils"
 	//log "github.com/Sirupsen/logrus"
 	"github.com/mailgun/oxy/roundrobin"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
+	"github.com/LPgenerator/lpg-load-balancer/common"
 )
 
 type Backend struct {

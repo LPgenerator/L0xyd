@@ -9,9 +9,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 
-	_ "git.lpgenerator.ru/sys/lpg-load-balancer/commands"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
+	_ "github.com/LPgenerator/lpg-load-balancer/commands"
+	"github.com/LPgenerator/lpg-load-balancer/common"
+	"github.com/LPgenerator/lpg-load-balancer/helpers"
 )
 
 var NAME = "lpg-load-balancer"

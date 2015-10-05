@@ -8,9 +8,9 @@ import (
 	log "github.com/Sirupsen/logrus"
 	service "github.com/ayufan/golang-kardianos-service"
 
-	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
+	"github.com/LPgenerator/lpg-load-balancer/common"
+	"github.com/LPgenerator/lpg-load-balancer/helpers"
+	"github.com/LPgenerator/lpg-load-balancer/helpers/service"
 )
 
 const (

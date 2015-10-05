@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
+	"github.com/LPgenerator/lpg-load-balancer/common"
+	"github.com/LPgenerator/lpg-load-balancer/helpers"
 )
 
 type configOptions struct {

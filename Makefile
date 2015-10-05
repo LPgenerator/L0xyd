@@ -109,8 +109,8 @@ package-deb-fpm:
 		--deb-priority optional --category admin \
 		--force \
 		--deb-compression bzip2 \
-		--url https://gitlab.com/gotlium/lpg-load-balancer \
-		--description "LPgenerator simple load balancer" \
+		--url https://github.com/LPgenerator/lpg-load-balancer \
+		--description "Simple load balancer with Http API." \
 		-m "GoTLiuM InSPiRiT <gotlium@gmail.com>" \
 		--license "GPLv3" \
 		--vendor "github.com/gotlium" \
@@ -129,8 +129,8 @@ package-rpm-fpm:
 		-p out/rpm/$(PACKAGE_NAME)_$(PACKAGE_ARCH).rpm \
 		--rpm-compression bzip2 --rpm-os linux \
 		--force \
-		--url https://gitlab.com/gotlium/lpg-load-balancer \
-		--description "LPgenerator simple load balancer" \
+		--url https://github.com/LPgenerator/lpg-load-balancer \
+		--description "Simple load balancer with Http API." \
 		-m "GoTLiuM InSPiRiT <gotlium@gmail.com>" \
 		--license "GPLv3" \
 		--vendor "github.com/gotlium" \

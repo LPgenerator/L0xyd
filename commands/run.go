@@ -23,13 +23,13 @@ import (
 	"github.com/mailgun/oxy/roundrobin"
 
 	log "github.com/Sirupsen/logrus"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
+	"github.com/LPgenerator/lpg-load-balancer/common"
+	"github.com/LPgenerator/lpg-load-balancer/helpers"
 	service "github.com/ayufan/golang-kardianos-service"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/mirroring"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/statistics"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/monitoring"
+	"github.com/LPgenerator/lpg-load-balancer/helpers/service"
+	"github.com/LPgenerator/lpg-load-balancer/commands/mirroring"
+	"github.com/LPgenerator/lpg-load-balancer/commands/statistics"
+	"github.com/LPgenerator/lpg-load-balancer/commands/monitoring"
 )
 
 
@@ -296,7 +296,7 @@ func (mr *RunCommand) Run() {
 	stream, _ := stream.New(
 		rl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
 
-	//todo: memetrics mw
+	//todo: Memetrics Middleware
 
 	LB.lb = lb
 	LB.mirror = mrr_mw
