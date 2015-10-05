@@ -1,7 +1,7 @@
 # API listen port
 #
 # Default:
-# api-address = "0.0.0.0:8081"
+# api-address = "0.0.0.0:9090"
 #
 # Default:
 # api-login = "lb"

@@ -23,6 +23,10 @@ Get LB statistics
 
     curl -X GET --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:9090/stats
 
+Get LB status
+
+    curl -X GET --user lb:7eNQ4iWLgDw4Q6w -H "Accept: application/json" -s -i http://127.0.0.1:9090/status
+
 
 ### Control
 
@@ -41,6 +45,10 @@ Remove instance from LB
 Get LB statistics
 
     lpg-load-balancer ctl -a stats
+
+Get LB status
+
+    lpg-load-balancer ctl -a status
 
 
 ### Default configuration

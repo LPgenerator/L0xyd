@@ -61,7 +61,7 @@ type BaseConfig struct {
 func NewConfig() *Config {
 	return &Config{
 		BaseConfig: BaseConfig{
-			ApiAddress: "0.0.0.0:9090",
+			ApiAddress: "127.0.0.1:9090",
 			LbApiLogin: "lb",
 			LbApiPassword: "7eNQ4iWLgDw4Q6w",
 			LbAddress: "127.0.0.1:8080",

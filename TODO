@@ -1,7 +1,7 @@
-* Mirror GET requests to test server
 * LB groups
 * Tune OS TCP Stack
 * Tests
 * Fix lint messages
 * Backup servers - резервные сервера
 * config on docs
+* Hot reloading

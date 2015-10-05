@@ -199,6 +199,16 @@ func HandleStats(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func HandleStatus(w http.ResponseWriter, r *http.Request) {
+	updateSystemStatus()
+
+	stats, err := json.MarshalIndent(sysStatus, "", "  ")
+	if err == nil {
+		io.WriteString(w, string(stats))
+	} else {
+		setStatus(w, "ERROR")
+	}
+}
 
 func (mr *RunCommand) Run() {
 	go func() {
@@ -209,6 +219,10 @@ func (mr *RunCommand) Run() {
 		http.HandleFunc(
 			"/stats", helpers.BasicAuth(
 			helpers.LogRequests(HandleStats),
+			mr.config.LbApiLogin, mr.config.LbApiPassword))
+		http.HandleFunc(
+			"/status", helpers.BasicAuth(
+			helpers.LogRequests(HandleStatus),
 			mr.config.LbApiLogin, mr.config.LbApiPassword))
 		log.Println("LB API listen at", mr.config.ApiAddress)
 		http.ListenAndServe(mr.config.ApiAddress, nil)

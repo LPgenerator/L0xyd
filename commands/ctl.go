@@ -16,7 +16,7 @@ import (
 type CtlCommand struct {
 	configOptions
 
-	LbAction  string `short:"a" long:"action" description:"add/rm/list/stats"`
+	LbAction  string `short:"a" long:"action" description:"add/rm/list/stats/status"`
 	LbBackend string `short:"b" long:"backend" description:"127.0.0.1:8081"`
 }
 
@@ -65,6 +65,8 @@ func (c *CtlCommand) Execute(context *cli.Context) {
 		fmt.Println(c.doRequest("GET", "/", ""))
 	} else if c.LbAction == "stats" {
 		fmt.Println(c.doRequest("GET", "/stats", ""))
+	} else if c.LbAction == "status" {
+		fmt.Println(c.doRequest("GET", "/status", ""))
 	} else if c.LbAction == "add" {
 		fmt.Println(c.doRequest("PUT", "/", c.LbBackend))
 	} else if c.LbAction == "delete" {
