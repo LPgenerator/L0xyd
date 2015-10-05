@@ -175,8 +175,9 @@ func HandleStats(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getNextHandler(new http.Handler, old http.Handler, enabled bool) (handler http.Handler) {
+func getNextHandler(new http.Handler, old http.Handler, enabled bool, mw string) (handler http.Handler) {
 	if enabled == true {
+		log.Printf("LB: '%s' is enabled", mw)
 		return new
 	}
 	return old
@@ -195,6 +196,7 @@ func (mr *RunCommand) Run() {
 	oxyLogger := &helpers.OxyLogger{}
 	fwd_logger := forward.Logger(oxyLogger)
 	stm_logger := stream.Logger(oxyLogger)
+	//rb_logger := roundrobin.RebalancerLogger(oxyLogger)
 
 	if mr.config.LbLogFile != "" {
 		f, err := os.OpenFile(
@@ -205,6 +207,7 @@ func (mr *RunCommand) Run() {
 			fileLogger := utils.NewFileLogger(f, utils.INFO)
 			fwd_logger = forward.Logger(fileLogger)
 			stm_logger = stream.Logger(fileLogger)
+			//rb_logger := roundrobin.RebalancerLogger(fileLogger)
 			defer f.Close()
 		}
 	}
@@ -218,16 +221,27 @@ func (mr *RunCommand) Run() {
 
 	// Statistics
 	mts_mw, _ := statistics.New(fwd, stats)
-	mts := getNextHandler(mts_mw, fwd, mr.config.LbStats)
+	mts := getNextHandler(mts_mw, fwd, mr.config.LbStats, "Statistics")
 
 	// Monitorng
 	mon_mw, _ := monitoring.New(mts, mr.config)
-	mon := getNextHandler(mon_mw, mts, mr.config.LbMonitorBrokenBackends)
+	mon := getNextHandler(
+		mon_mw, mts, mr.config.LbMonitorBrokenBackends, "Monitoring")
 
 	lb, _ := roundrobin.New(mon)
 
+	// Rebalancer
+	rb_mw, _ := roundrobin.NewRebalancer(lb)
+	rb := getNextHandler(
+		rb_mw, lb, mr.config.LbEnableRebalancer, "Rebalancer")
+
 	stream, _ := stream.New(
-		lb, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
+		rb, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
+
+	//todo: connlimit mw
+	//todo: ratelimit mw
+	//todo: trace mw
+	//todo: memetrics mw
 
 	LB.lb = lb
 	LB.config = mr.config

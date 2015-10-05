@@ -9,7 +9,7 @@ Simple load balancer with Http API.
 
 Add instance to LB
 
-    curl -X PUT --user lb:7eNQ4iWLgDw4Q6w -d 'url=127.0.0.1:8081&weight=0' -H "Accept: application/json" -s -i http://127.0.0.1:9090
+    curl -X PUT --user lb:7eNQ4iWLgDw4Q6w -d 'url=127.0.0.1:8081&weight=1' -H "Accept: application/json" -s -i http://127.0.0.1:9090
 
 List all instances under LB
 

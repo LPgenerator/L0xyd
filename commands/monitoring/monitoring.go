@@ -2,12 +2,15 @@ package monitoring
 
 import (
 	"fmt"
+	"sync"
 	"time"
 	"os/exec"
 	"net/url"
 	"net/http"
 	"io/ioutil"
+	"github.com/mailgun/timetools"
 	"github.com/mailgun/oxy/utils"
+	//log "github.com/Sirupsen/logrus"
 	"github.com/mailgun/oxy/roundrobin"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
 )
@@ -18,17 +21,22 @@ type Backend struct {
 }
 
 type Monitoring struct {
+	m           *sync.RWMutex
 	next        http.Handler
 	backends    map[string]Backend
 	lb          *roundrobin.RoundRobin
 	config      *common.Config
+	clock       timetools.TimeProvider
+	interval    time.Time
 }
 
 func New(next http.Handler, config *common.Config) (*Monitoring, error) {
 	strm := &Monitoring{
 		backends: make(map[string]Backend),
+		m:        &sync.RWMutex{},
 		next:     next,
 		config:   config,
+		clock:    &timetools.RealTime{},
 	}
 	return strm, nil
 }
@@ -61,8 +69,8 @@ func (m *Monitoring) Start(lb *roundrobin.RoundRobin) {
 
 func (m *Monitoring) doStart() {
 	check_period := time.Duration(m.config.LbMonitorCheckPeriod) * time.Second
+	fail_timeout := time.Duration(m.config.LbMonitorFailTimeout) * time.Second
 	max_fails := m.config.LbMonitorMaxFails
-	fmt.Sprintf("check_period: %d", check_period)
 
 	for {
 		for backend, _ := range m.backends {
@@ -71,19 +79,30 @@ func (m *Monitoring) doStart() {
 				m.removeBackend(backend)
 				m.callNotificationUrl(backend)
 				m.callNotificationScript(backend)
-				delete(m.backends[backend].ResponseCounts, 502)
+				m.safeRemove502(backend)
 			}
 		}
 		time.Sleep(check_period)
-		m.cleanupFailTimeout()
+		m.cleanupFailTimeout(fail_timeout)
 	}
 }
 
-func (m *Monitoring) cleanupFailTimeout() {
-	// TODO: fail_timeout
-	// удалять после определенного времени данные по 502
-	// потому как есть вероятность что 502 может быть переодически
-	//delete(m.backends[backend].ResponseCounts, 502)
+func (m *Monitoring) safeRemove502(backend string) {
+	m.m.Lock()
+	defer m.m.Unlock()
+	delete(m.backends[backend].ResponseCounts, 502)
+}
+
+func (m *Monitoring) cleanupFailTimeout(fail_timeout time.Duration) {
+	if !m.clock.UtcNow().After(m.interval) { return }
+	m.interval = m.clock.UtcNow().Add(fail_timeout)
+
+	for backend, _ := range m.backends {
+		if m.backends[backend].State == false { continue }
+		if m.backends[backend].ResponseCounts[502] > 0 {
+			m.safeRemove502(backend)
+		}
+	}
 }
 
 func (m *Monitoring) removeBackend(backend string) {
@@ -94,8 +113,6 @@ func (m *Monitoring) removeBackend(backend string) {
 		var bak = m.backends[backend]
 		bak.State = false
 		m.backends[backend] = bak
-		//delete(m.backends[backend].ResponseCounts, 502)
-		fmt.Println(m.backends[backend])
 	}
 }
 

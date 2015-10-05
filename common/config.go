@@ -38,6 +38,7 @@ type BaseConfig struct {
 	LbMonitorFailTimeout           int     `toml:"fail_timeout"`
 	LbMonitorBashScript            string  `toml:"bash_script" json:"bash_script"`
 	LbMonitorWebUrl                string  `toml:"web_url" json:"web_url"`
+	LbEnableRebalancer             bool    `toml:"enable_rebalancer"`
 
 	Servers    map[string]Server
 }
@@ -53,6 +54,7 @@ func NewConfig() *Config {
 			LbStreamRetryConditions: `IsNetworkError() && Attempts() < 10`,
 			LbMonitorBrokenBackends: false,
 			LbMonitorRemoveBrokenBackends: true,
+			LbEnableRebalancer: true,
 			LbMonitorCheckPeriod: 1,
 			LbMonitorMaxFails: 10,
 			LbMonitorFailTimeout: 10,
