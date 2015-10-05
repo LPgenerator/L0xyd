@@ -5,7 +5,6 @@ import (
 	"io"
 	"fmt"
 	"time"
-	//"bytes"
 	"strconv"
 	"strings"
 	"net/url"
@@ -33,11 +32,11 @@ import (
 	"git.lpgenerator.ru/sys/lpg-load-balancer/commands/monitoring"
 )
 
+
 type Server struct {
 	Url              string
 	Weight           int
 }
-
 
 type RunCommand struct {
 	configOptions
@@ -49,11 +48,12 @@ type RunCommand struct {
 }
 
 var LB struct {
-	lb      *roundrobin.RoundRobin
-	config  *common.Config
-	stats   *stats.Stats
-	mirror  *mirror.Mirroring
+	lb               *roundrobin.RoundRobin
+	config           *common.Config
+	stats            *stats.Stats
+	mirror           *mirror.Mirroring
 }
+
 
 func setStatus(w http.ResponseWriter, status string) {
 	if status == "ERROR" {
@@ -101,6 +101,15 @@ func setHttpHeaders(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Server", "lpgenerator.ru")
 }
+
+func getNextHandler(new http.Handler, old http.Handler, enabled bool, mw string) (handler http.Handler) {
+	if enabled == true {
+		log.Printf("LB: '%s' is enabled", mw)
+		return new
+	}
+	return old
+}
+
 
 func HandleIndex(w http.ResponseWriter, r *http.Request) {
 	setHttpHeaders(w)
@@ -190,14 +199,6 @@ func HandleStats(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func getNextHandler(new http.Handler, old http.Handler, enabled bool, mw string) (handler http.Handler) {
-	if enabled == true {
-		log.Printf("LB: '%s' is enabled", mw)
-		return new
-	}
-	return old
-}
-
 
 func (mr *RunCommand) Run() {
 	go func() {
@@ -233,15 +234,13 @@ func (mr *RunCommand) Run() {
 	}
 
 	stats := stats.New()
-	//consoleLogger := utils.NewFileLogger(os.Stdout, utils.INFO)
-
 	fwd, _ := forward.New(fwd_logger)
 
-	// Trace mw
+	// Trace Middleware
 	trc_log, _ := os.OpenFile(
 		mr.config.LbTaceFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	trc_mw, _ := trace.New(fwd, trc_log)
-	trc := getNextHandler(trc_mw, fwd, mr.config.LbEnableTace, "Trace")
+	trc := getNextHandler(trc_mw, fwd, mr.config.LbEnableTace, "Tracing")
 
 	mrr_mw, _ := mirror.New(trc)
 	mrr := getNextHandler(mrr_mw, trc, mr.config.LbStats, "Mirroring")
@@ -269,7 +268,7 @@ func (mr *RunCommand) Run() {
 	cl := getNextHandler(
 		cl_mw, rb, mr.config.LbEnableConnlimit, "Connection Limits")
 
-	//todo: ratelimit mw
+	// Rate Limits Middleware
 	defaultRates := ratelimit.NewRateSet()
 	defaultRates.Add(
 		time.Duration(mr.config.LbRatelimitPeriodSeconds) * time.Second,
@@ -283,7 +282,6 @@ func (mr *RunCommand) Run() {
 	stream, _ := stream.New(
 		rl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
 
-	//todo: trace mw
 	//todo: memetrics mw
 
 	LB.lb = lb
@@ -323,7 +321,6 @@ func (mr *RunCommand) Run() {
 		os.Exit(255)
 	}
 }
-
 
 func (mr *RunCommand) Start(s service.Service) error {
 	if len(mr.WorkingDirectory) > 0 {

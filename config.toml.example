@@ -9,15 +9,12 @@
 # Default:
 # api-password = "7eNQ4iWLgDw4Q6w"
 #
-# LB listen port
-#
 # Default:
 # lb-address = "127.0.0.1:8080"
 #
-# Log all into file
-#
 # Default:
 # lb-log-file = ""
+#
 #
 # Statistics
 #
@@ -31,6 +28,7 @@
 #
 #
 # Default instances under Load Balancer
+#
 # [Servers]
 #   [Servers.web-1]
 #   url = "http://127.0.0.1:8081"
@@ -53,11 +51,6 @@
 #
 # Default:
 # stream-retry-conditions = "IsNetworkError() && Attempts() < 10"
-#
-# Web stats
-#
-# Default:
-# statistics-enabled = false
 
 
 # Monitoring
