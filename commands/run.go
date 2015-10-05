@@ -344,7 +344,7 @@ func (c *RunCommand) Execute(context *cli.Context) {
 }
 
 func init() {
-	common.RegisterCommand2("run",  "Run Load Balancer", &RunCommand{
+	common.RegisterCommand2("run", "Run Load Balancer", &RunCommand{
 		ServiceName: defaultServiceName,
 	})
 }

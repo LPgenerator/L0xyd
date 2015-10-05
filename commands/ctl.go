@@ -75,5 +75,5 @@ func (c *CtlCommand) Execute(context *cli.Context) {
 }
 
 func init() {
-	common.RegisterCommand2("ctl",  "Control utility", &CtlCommand{})
+	common.RegisterCommand2("ctl", "Control utility", &CtlCommand{})
 }

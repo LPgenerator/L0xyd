@@ -1,13 +1,15 @@
 package commands
 
 import (
-	log "github.com/Sirupsen/logrus"
-	service "github.com/ayufan/golang-kardianos-service"
-	"github.com/codegangsta/cli"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
-	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	"os"
 	"runtime"
+
+	"github.com/codegangsta/cli"
+	log "github.com/Sirupsen/logrus"
+	service "github.com/ayufan/golang-kardianos-service"
+
+	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
+	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers/service"
 )
 

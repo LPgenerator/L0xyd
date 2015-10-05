@@ -11,7 +11,6 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/helpers"
-	//"github.com/mailgun/oxy/trace"
 )
 
 type SHSCommand struct {
@@ -65,5 +64,5 @@ func (c *SHSCommand) Execute(context *cli.Context) {
 
 
 func init() {
-	common.RegisterCommand2("http",  "Run simple HTTP server", &SHSCommand{})
+	common.RegisterCommand2("http", "Run simple HTTP server", &SHSCommand{})
 }

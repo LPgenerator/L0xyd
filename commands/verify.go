@@ -2,7 +2,6 @@ package commands
 
 import (
 	"github.com/codegangsta/cli"
-
 	log "github.com/Sirupsen/logrus"
 	"git.lpgenerator.ru/sys/lpg-load-balancer/common"
 )
@@ -21,6 +20,5 @@ func (c *VerifyCommand) Execute(context *cli.Context) {
 }
 
 func init() {
-	common.RegisterCommand2(
-		"verify",  "Verify configuration", &VerifyCommand{})
+	common.RegisterCommand2("verify", "Verify configuration", &VerifyCommand{})
 }
