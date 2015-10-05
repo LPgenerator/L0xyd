@@ -26,6 +26,8 @@ type Server struct {
 
 type BaseConfig struct {
 	ApiAddress                     string  `toml:"api-address"`
+	LbApiLogin                     string  `toml:"api-login"`
+	LbApiPassword                  string  `toml:"api-password"`
 	LbAddress                      string  `toml:"lb-address"`
 	LbLogFile                      string  `toml:"lb-log-file"`
 
@@ -52,6 +54,8 @@ func NewConfig() *Config {
 	return &Config{
 		BaseConfig: BaseConfig{
 			ApiAddress: "0.0.0.0:9090",
+			LbApiLogin: "lb",
+			LbApiPassword: "7eNQ4iWLgDw4Q6w",
 			LbAddress: "127.0.0.1:8080",
 			LbLogFile: "",
 

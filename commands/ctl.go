@@ -2,7 +2,6 @@ package commands
 
 import (
 	"fmt"
-	//"bytes"
 	"strings"
 	"net/url"
 	"net/http"
@@ -31,7 +30,7 @@ func (c *CtlCommand) doRequest(method string, path string, backend string) strin
 	}
 
 	r, err := http.NewRequest(method, uri, strings.NewReader(data.Encode()))
-	r.Header.Add("Authorization", "Basic bGI6N2VOUTRpV0xnRHc0UTZ3")
+	r.SetBasicAuth(c.config.LbApiLogin, c.config.LbApiPassword)
 	if backend != "" {
 		r.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
@@ -52,7 +51,7 @@ func (c *CtlCommand) doRequest(method string, path string, backend string) strin
 			}
 		}
 	}
-	return "ERROR"
+	return "An error occurred while working with API"
 }
 
 func (c *CtlCommand) Execute(context *cli.Context) {
@@ -76,5 +75,5 @@ func (c *CtlCommand) Execute(context *cli.Context) {
 }
 
 func init() {
-	common.RegisterCommand2("ctl",  "Simple control command", &CtlCommand{})
+	common.RegisterCommand2("ctl",  "Control utility", &CtlCommand{})
 }

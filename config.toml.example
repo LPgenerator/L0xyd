@@ -3,6 +3,12 @@
 # Default:
 # api-address = "0.0.0.0:8081"
 #
+# Default:
+# api-login = "lb"
+#
+# Default:
+# api-password = "7eNQ4iWLgDw4Q6w"
+#
 # LB listen port
 #
 # Default:

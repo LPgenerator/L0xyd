@@ -1,4 +1,3 @@
-* lb-ctl
 * Mirror GET requests to test server
 * LB groups
 * Tune OS TCP Stack
@@ -6,3 +5,4 @@
 * Fix lint messages
 * Backup servers - резервные сервера
 * config on docs
+

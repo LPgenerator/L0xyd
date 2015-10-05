@@ -115,6 +115,7 @@ AUTHOR(S):
    
 COMMANDS:
    run          Run Load Balancer
+   ctl          Control utility
    install      Install service
    uninstall    Uninstall service
    start        Start service

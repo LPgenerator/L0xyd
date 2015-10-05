@@ -184,12 +184,17 @@ func getNextHandler(new http.Handler, old http.Handler, enabled bool, mw string)
 	return old
 }
 
+
 func (mr *RunCommand) Run() {
 	go func() {
 		http.HandleFunc(
-			"/", helpers.BasicAuth(helpers.LogRequests(HandleIndex)))
+			"/", helpers.BasicAuth(
+			helpers.LogRequests(HandleIndex),
+			mr.config.LbApiLogin, mr.config.LbApiPassword))
 		http.HandleFunc(
-			"/stats", helpers.BasicAuth(helpers.LogRequests(HandleStats)))
+			"/stats", helpers.BasicAuth(
+			helpers.LogRequests(HandleStats),
+			mr.config.LbApiLogin, mr.config.LbApiPassword))
 		log.Println("LB API listen at", mr.config.ApiAddress)
 		http.ListenAndServe(mr.config.ApiAddress, nil)
 	}()
