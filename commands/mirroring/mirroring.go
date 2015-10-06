@@ -10,10 +10,10 @@ import (
 )
 
 type Mirroring struct {
-	next        http.Handler
-	mirrors     []string
-	rewriter    ReqRewriter
-	methods     map[string]bool
+	next         http.Handler
+	mirrors      []string
+	rewriter     ReqRewriter
+	methods      map[string]bool
 }
 
 type ReqRewriter interface {
@@ -22,8 +22,8 @@ type ReqRewriter interface {
 
 func New(next http.Handler, methods string) (*Mirroring, error) {
 	strm := &Mirroring{
-		next:    next,
-		methods: make(map[string]bool),
+		next:     next,
+		methods:  make(map[string]bool),
 	}
 	for _, m := range strings.Split(methods, "|") {
 		strm.methods[m] = true
@@ -41,25 +41,25 @@ func (m *Mirroring) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	m.next.ServeHTTP(pw, r)
 }
 
-func (m *Mirroring) mirrorRequest(backend string, w http.ResponseWriter, req *http.Request) {
-	outReq := new(http.Request)
-	*outReq = *req
+func (m *Mirroring) mirrorRequest(backend string, w http.ResponseWriter, r *http.Request) {
+	req := new(http.Request)
+	*req = *req
 
 	u, err := url.Parse(backend)
-	outReq.URL = utils.CopyURL(u)
-	outReq.URL.Opaque = req.RequestURI
-	outReq.URL.RawQuery = ""
-	outReq.Proto = "HTTP/1.1"
-	outReq.ProtoMajor = 1
-	outReq.ProtoMinor = 1
-	outReq.Close = false
+	req.URL = utils.CopyURL(u)
+	req.URL.Opaque = r.RequestURI
+	req.URL.RawQuery = ""
+	req.Proto = "HTTP/1.1"
+	req.ProtoMajor = 1
+	req.ProtoMinor = 1
+	req.Close = false
 
-	outReq.Header = make(http.Header)
-	utils.CopyHeaders(outReq.Header, req.Header)
-	outReq.RequestURI = ""
+	req.Header = make(http.Header)
+	utils.CopyHeaders(req.Header, r.Header)
+	req.RequestURI = ""
 
 	client := &http.Client{}
-	response, err := client.Do(outReq)
+	response, err := client.Do(req)
 
 	if err == nil {
 		ioutil.ReadAll(response.Body)
@@ -72,10 +72,10 @@ func (m *Mirroring) Add(mirror string) {
 }
 
 func (m *Mirroring) Del(mirror string) {
-    for i, url := range m.mirrors {
+	for i, url := range m.mirrors {
 		if url == mirror {
 			m.mirrors = append(m.mirrors[:i], m.mirrors[i+1:]...)
 			break
 		}
-    }
+	}
 }
