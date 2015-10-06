@@ -25,13 +25,14 @@ import (
 	"github.com/mailgun/oxy/roundrobin"
 
 	log "github.com/Sirupsen/logrus"
-	"github.com/LPgenerator/lpg-load-balancer/common"
-	"github.com/LPgenerator/lpg-load-balancer/helpers"
+	"github.com/LPgenerator/L0xyd/common"
+	"github.com/LPgenerator/L0xyd/helpers"
 	service "github.com/ayufan/golang-kardianos-service"
-	"github.com/LPgenerator/lpg-load-balancer/helpers/service"
-	"github.com/LPgenerator/lpg-load-balancer/commands/mirroring"
-	"github.com/LPgenerator/lpg-load-balancer/commands/statistics"
-	"github.com/LPgenerator/lpg-load-balancer/commands/monitoring"
+	"github.com/LPgenerator/L0xyd/helpers/service"
+	"github.com/LPgenerator/L0xyd/commands/mirroring"
+	"github.com/LPgenerator/L0xyd/commands/statistics"
+	"github.com/LPgenerator/L0xyd/commands/monitoring"
+	"github.com/LPgenerator/L0xyd/commands/x-headers"
 )
 
 
@@ -258,7 +259,6 @@ func HandleWebRemove(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 func (mr *RunCommand) Run() {
 	go func() {
 		mux := http.NewServeMux()
@@ -330,11 +330,14 @@ func (mr *RunCommand) Run() {
 	stats := stats.New()
 	fwd, _ := forward.New(fwd_logger)
 
+	xh_mw, _ := headers.New(fwd, mr.config)
+	xh := getNextHandler(xh_mw, fwd, mr.config.LbEnableXHeader, "X-Header")
+
 	// Tracing Middleware
 	trc_log, _ := os.OpenFile(
 		mr.config.LbTaceFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
-	trc_mw, _ := trace.New(fwd, trc_log)
-	trc := getNextHandler(trc_mw, fwd, mr.config.LbEnableTace, "Tracing")
+	trc_mw, _ := trace.New(xh, trc_log)
+	trc := getNextHandler(trc_mw, xh, mr.config.LbEnableTace, "Tracing")
 
 	// Mirroring Middleware
 	mrr_mw, _ := mirror.New(trc, mr.config.LbMirroringMethods)

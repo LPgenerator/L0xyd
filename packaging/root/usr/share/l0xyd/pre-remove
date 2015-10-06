@@ -1,0 +1,5 @@
+#!/bin/sh
+
+l0xyd stop >/dev/null 2>/dev/null
+l0xyd uninstall >/dev/null 2>/dev/null
+exit 0

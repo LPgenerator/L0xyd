@@ -1,5 +1,5 @@
 package common
 
-var NAME = "lpg-load-balancer"
+var NAME = "l0xyd"
 var VERSION = "dev"
 var REVISION = "HEAD"

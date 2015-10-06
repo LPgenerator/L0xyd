@@ -4,8 +4,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/LPgenerator/lpg-load-balancer/common"
-	"github.com/LPgenerator/lpg-load-balancer/helpers"
+	"github.com/LPgenerator/L0xyd/common"
+	"github.com/LPgenerator/L0xyd/helpers"
 )
 
 type configOptions struct {
@@ -16,9 +16,9 @@ type configOptions struct {
 
 func getDefaultConfigFile() string {
 	if os.Getuid() == 0 {
-		return "/etc/lpg-load-balancer/config.toml"
+		return "/etc/l0xyd/config.toml"
 	} else if homeDir := helpers.GetHomeDir(); homeDir != "" {
-		return filepath.Join(homeDir, ".lpg-load-balancer", "config.toml")
+		return filepath.Join(homeDir, ".l0xyd", "config.toml")
 	} else if currentDir := helpers.GetCurrentWorkingDirectory(); currentDir != "" {
 		return filepath.Join(currentDir, "config.toml")
 	} else {

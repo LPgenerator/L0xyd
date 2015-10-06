@@ -1,5 +1,0 @@
-#!/bin/sh
-
-lpg-load-balancer stop >/dev/null 2>/dev/null
-lpg-load-balancer uninstall >/dev/null 2>/dev/null
-exit 0

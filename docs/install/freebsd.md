@@ -3,21 +3,21 @@
 Download the binary for your system:
 
 ```bash
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/LPgenerator/lpg-load-balancer/releases/download/v1.0/lpg-load-balancer-freebsd-amd64
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/LPgenerator/lpg-load-balancer/releases/download/v1.0/lpg-load-balancer-freebsd-386
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-freebsd-amd64
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-freebsd-386
 ```
 
 Give it permissions to execute:
 
 ```bash
-chmod +x /usr/local/bin/lpg-load-balancer
+chmod +x /usr/local/bin/l0xyd
 ```
 
 Run GitLab-Runner:
 
 ```bash
 cd ~
-lpg-load-balancer run
+l0xyd run
 ```
 
-Voila! lpg-load-balancer is currently running, but it will not start automatically after system reboot.
+Voila! l0xyd is currently running, but it will not start automatically after system reboot.

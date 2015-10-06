@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -e
+
+# detect user: first try to use l0xyd
+for USER in l0xyd; do
+  if id -u "$USER" >/dev/null 2>/dev/null; then
+    echo "l0xyd: detected user $USER"
+    break
+  fi
+done
+
+# create user if doesn't exist: it will create l0xyd if not found
+if ! id -u "$USER" >/dev/null 2>/dev/null; then
+  echo "l0xyd: creating $USER..."
+  useradd --shell /bin/bash -m -d /home/$USER $USER
+fi
+
+# get USER home directory
+eval HOMEDIR=~$USER
+
+# create empty config and re-register LB
+mkdir -p /etc/l0xyd
+chmod 0700 /etc/l0xyd
+if [ -f $HOMEDIR/config.toml ] && [ ! -f /etc/l0xyd/config.toml ]; then
+  echo "l0xyd: importing configuration to /etc/l0xyd/config.toml"
+  cp $HOMEDIR/config.toml /etc/l0xyd/config.toml
+  chmod 0600 /etc/l0xyd/config.toml
+fi
+
+# uninstall old service
+l0xyd stop --service="l0xyd" >/dev/null 2>/dev/null || :
+l0xyd uninstall --service="l0xyd" >/dev/null 2>/dev/null || :
+
+# re-register LB
+l0xyd stop >/dev/null 2>/dev/null || :
+l0xyd uninstall >/dev/null 2>/dev/null || :
+l0xyd install --user=$USER --working-directory=$HOMEDIR
+
+# start LB service
+l0xyd start || :

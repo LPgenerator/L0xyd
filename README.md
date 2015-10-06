@@ -1,4 +1,4 @@
-## LPG LOAD BALANCER
+## L0xyd
 
 Simple load balancer with Http API.
 
@@ -32,23 +32,23 @@ Get LB status
 
 Add instance to LB
 
-    lpg-load-balancer ctl -a add -b 127.0.0.1:8081
+    l0xyd ctl -a add -b 127.0.0.1:8081
 
 List all instances under LB
 
-    lpg-load-balancer ctl -a list
+    l0xyd ctl -a list
 
 Remove instance from LB
 
-    lpg-load-balancer ctl -a delete -b 127.0.0.1:8081
+    l0xyd ctl -a delete -b 127.0.0.1:8081
 
 Get LB statistics
 
-    lpg-load-balancer ctl -a stats
+    l0xyd ctl -a stats
 
 Get LB status
 
-    lpg-load-balancer ctl -a status
+    l0xyd ctl -a status
 
 
 ### Default configuration
@@ -63,7 +63,7 @@ LB listen port
 
 LB access log
 
-    lb-log-file = "/var/log/lpg-lb.log"
+    lb-log-file = "/var/log/l0xyd.log"
 
 Servers examples
 
@@ -79,16 +79,16 @@ Servers examples
 
 ### Contributing
 
-The official repository for this project is on [Github.com](https://github.com/LPgenerator/lpg-load-balancer).
+The official repository for this project is on [Github.com](https://github.com/LPgenerator/L0xyd).
 
 * [Development](docs/development/README.md)
-* [Issues](https://github.com/LPgenerator/lpg-load-balancer/issues)
-* [Pull Requests](https://github.com/LPgenerator/lpg-load-balancer/pulls)
+* [Issues](https://github.com/LPgenerator/L0xyd/issues)
+* [Pull Requests](https://github.com/LPgenerator/L0xyd/pulls)
 
 
 ### Requirements
 
-**None:** lpg-load-balancer is run as a single binary.
+**None:** l0xyd is run as a single binary.
 
 This project is designed for the Linux, OS X and Windows operating systems.
 
@@ -107,13 +107,13 @@ This project is designed for the Linux, OS X and Windows operating systems.
 ### Help
 
 ```bash
-$ lpg-load-balancer --help
+$ l0xyd --help
 
 NAME:
-   lpg-load-balancer - Simple load balancer with Http API.
+   L0xyd - Simple load balancer with Http API.
 
 USAGE:
-   lpg-load-balancer [global options] command [command options] [arguments...]
+   l0xyd [global options] command [command options] [arguments...]
    
 VERSION:
    1.0~beta.0.g4badd3b (4badd3b)

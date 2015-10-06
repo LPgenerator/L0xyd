@@ -54,6 +54,10 @@ type BaseConfig struct {
 	LbConnlimitConnections         int     `toml:"connlimit-connections"`
 	LbConnlimitVariable            string  `toml:"connlimit-variable"`
 
+	LbEnableXHeader                bool    `toml:"enable-x-header"`
+	LbXHeaderKey                   string  `toml:"x-header-key"`
+	LbXHeaderVal                   string  `toml:"x-header-val"`
+
 	LbEnableRatelimit              bool    `toml:"enable-ratelimit"`
 	LbRatelimitRequests            int     `toml:"ratelimit-requests"`
 	LbRatelimitPeriodSeconds       int     `toml:"ratelimit-period-seconds"`
@@ -97,6 +101,9 @@ func NewConfig() *Config {
 			LbRatelimitPeriodSeconds: 1,
 			LbRatelimitBurst: 3,
 			LbRatelimitVariable: `client.ip`,
+			LbEnableXHeader: false,
+			LbXHeaderKey: "X-Proxy",
+			LbXHeaderVal: "L0xyd",
 
 			Servers: make(map[string]Server),
 		},

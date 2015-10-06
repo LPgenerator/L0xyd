@@ -10,7 +10,7 @@ import (
 
 	"github.com/codegangsta/cli"
 	log "github.com/Sirupsen/logrus"
-	"github.com/LPgenerator/lpg-load-balancer/common"
+	"github.com/LPgenerator/L0xyd/common"
 )
 
 type CtlCommand struct {

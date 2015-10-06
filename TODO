@@ -1,4 +1,4 @@
-* LB groups
+* Server based on Host header
 * Tune OS TCP Stack
 * Tests
 * Fix lint messages

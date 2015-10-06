@@ -13,7 +13,7 @@ Types of Contributions
 Report Bugs
 ~~~~~~~~~~~
 
-Report bugs at https://github.com/LPgenerator/lpg-load-balancer/issues.
+Report bugs at https://github.com/LPgenerator/L0xyd/issues.
 
 If you are reporting a bug, please include:
 
@@ -36,14 +36,14 @@ is open to whoever wants to implement it.
 Write Documentation
 ~~~~~~~~~~~~~~~~~~~
 
-lpg-load-balancer could always use more documentation, whether as part of the
-official lpg-load-balancer docs, in docstrings, or even on the web in blog posts,
+L0xyd could always use more documentation, whether as part of the
+official L0xyd docs, in docstrings, or even on the web in blog posts,
 articles, and such.
 
 Submit Feedback
 ~~~~~~~~~~~~~~~
 
-The best way to send feedback is to file an issue at https://github.com/LPgenerator/lpg-load-balancer/issues.
+The best way to send feedback is to file an issue at https://github.com/LPgenerator/L0xyd/issues.
 
 If you are proposing a feature:
 

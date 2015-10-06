@@ -10,9 +10,8 @@ import (
 	"io/ioutil"
 	"github.com/mailgun/timetools"
 	"github.com/mailgun/oxy/utils"
-	//log "github.com/Sirupsen/logrus"
 	"github.com/mailgun/oxy/roundrobin"
-	"github.com/LPgenerator/lpg-load-balancer/common"
+	"github.com/LPgenerator/L0xyd/common"
 )
 
 type Backend struct {

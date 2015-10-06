@@ -3,31 +3,29 @@
 Download the binary for your system:
 
 ```bash
-wget -O /usr/local/bin/lpg-load-balancer https://github.com/LPgenerator/lpg-load-balancer/releases/download/v1.0/lpg-load-balancer-OSX
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-OSX
 ```
 
 Give it permissions to execute:
 
 ```bash
-chmod +x /usr/local/bin/lpg-load-balancer
+chmod +x /usr/local/bin/l0xyd
 ```
 
-**The rest of commands execute as the user who will run lpg-load-balancer.**
-
-Install LB as service and start it:
+Install L0xyd as service and start it:
 
 ```bash
 cd ~
-lpg-load-balancer install
-lpg-load-balancer start
+l0xyd install
+l0xyd start
 ```
 
-Voila! lpg-load-balancer is installed and will be run after system reboot.
+Voila! L0xyd is installed and will be run after system reboot.
 
 ### Update
 
 Stop the service:
 
 ```bash
-lpg-load-balancer stop
+l0xyd stop
 ```

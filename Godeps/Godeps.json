@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/LPgenerator/lpg-load-balancer",
+	"ImportPath": "github.com/LPgenerator/L0xyd",
 	"GoVersion": "go1.5.1",
 	"Packages": [
 		"./..."

@@ -170,3 +170,11 @@
 # Defaults:
 # enable-mirroring = true
 # mirror-http-methods = "GET|HEAD"
+
+
+# Identification
+#
+# Defaults:
+# enable-x-header = false
+# x-header-key = "X-Proxy"
+# x-header-val = "L0xyd"

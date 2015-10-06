@@ -1,7 +1,7 @@
 ARGS=$(filter-out $@,$(MAKECMDGOALS))
 BRANCH=`git rev-parse --abbrev-ref HEAD`
 ENV=`basename "$PWD"`
-NAME ?= lpg-load-balancer
+NAME ?= l0xyd
 PACKAGE_NAME ?= $(NAME)
 PACKAGE_CONFLICT ?= $(PACKAGE_NAME)-beta
 REVISION := $(shell git rev-parse --short HEAD || echo unknown)
@@ -109,19 +109,19 @@ package-deb-fpm:
 		--deb-priority optional --category admin \
 		--force \
 		--deb-compression bzip2 \
-		--url https://github.com/LPgenerator/lpg-load-balancer \
-		--description "Simple load balancer with Http API." \
+		--url https://github.com/LPgenerator/L0xyd \
+		--description "L0xyd - Simple load balancer with Http API." \
 		-m "GoTLiuM InSPiRiT <gotlium@gmail.com>" \
 		--license "GPLv3" \
 		--vendor "github.com/gotlium" \
 		--conflicts $(PACKAGE_CONFLICT) \
-		--provides lpg-load-balancer \
-		--replaces lpg-load-balancer \
-		--after-install packaging/root/usr/share/lpg-load-balancer/post-install \
-		--before-remove packaging/root/usr/share/lpg-load-balancer/post-install \
+		--provides l0xyd \
+		--replaces l0xyd \
+		--after-install packaging/root/usr/share/l0xyd/post-install \
+		--before-remove packaging/root/usr/share/l0xyd/post-install \
 		-a $(PACKAGE_ARCH) \
 		packaging/root/=/ \
-		out/binaries/$(NAME)-linux-$(ARCH)=/usr/bin/lpg-load-balancer
+		out/binaries/$(NAME)-linux-$(ARCH)=/usr/bin/l0xyd
 
 package-rpm-fpm:
 	@mkdir -p out/rpm/
@@ -129,44 +129,44 @@ package-rpm-fpm:
 		-p out/rpm/$(PACKAGE_NAME)_$(PACKAGE_ARCH).rpm \
 		--rpm-compression bzip2 --rpm-os linux \
 		--force \
-		--url https://github.com/LPgenerator/lpg-load-balancer \
-		--description "Simple load balancer with Http API." \
+		--url https://github.com/LPgenerator/L0xyd \
+		--description "L0xyd - Simple load balancer with Http API." \
 		-m "GoTLiuM InSPiRiT <gotlium@gmail.com>" \
 		--license "GPLv3" \
 		--vendor "github.com/gotlium" \
 		--conflicts $(PACKAGE_CONFLICT) \
-		--provides lpg-load-balancer \
-		--replaces lpg-load-balancer \
+		--provides l0xyd \
+		--replaces l0xyd \
 		-a $(PACKAGE_ARCH) \
 		packaging/root/=/ \
-		out/binaries/$(NAME)-linux-$(ARCH)=/usr/bin/lpg-load-balancer
+		out/binaries/$(NAME)-linux-$(ARCH)=/usr/bin/l0xyd
 
 install-ci-tools:
 	bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
 	gvm install go1.4
 	gvm use go1.4
-	gvm pkgset create lpg-load-balancer
-	gvm pkgset use lpg-load-balancer
+	gvm pkgset create l0xyd
+	gvm pkgset use l0xyd
 	go get github.com/tools/godep
 	godep restore
 
 run_ci_test:
 	@# test -f ~/gvm.inst || (make install-ci-tools && make deps && touch ~/gvm.inst)
-	@source ~/.gvm/scripts/gvm; gvm use go1.4; gvm pkgset use lpg-load-balancer; go test ./... -cover
+	@source ~/.gvm/scripts/gvm; gvm use go1.4; gvm pkgset use l0xyd; go test ./... -cover
 
 session:
-	@tmux list-sessions | grep LPG-LB-WIN >& /dev/null && tmux attach -t "LPG-LB-WIN" || true
-	@tmux new-session -s "LPG-LB-WIN" -n "LPG-LB-FR" -d
-	@tmux split-window -h -t "LPG-LB-WIN"
-	@tmux split-window -v -t "LPG-LB-WIN"
-	@tmux select-pane -t "LPG-LB-WIN":"LPG-LB-FR".0
-	@tmux split-window -v -t "LPG-LB-WIN"
-	@tmux send-keys -t "LPG-LB-WIN":"LPG-LB-FR".0 "go run main.go http -l :8081" C-m
-	@tmux send-keys -t "LPG-LB-WIN":"LPG-LB-FR".1 "go run main.go http -l :8082" C-m
-	@tmux send-keys -t "LPG-LB-WIN":"LPG-LB-FR".2 "go run main.go run" C-m
-	@tmux send-keys -t "LPG-LB-WIN":"LPG-LB-FR".3 "sleep 5; make register-fake-http" C-m
-	@tmux send-keys -t "LPG-LB-WIN":"LPG-LB-FR".3 "make run-http-test"
-	@tmux attach -t "LPG-LB-WIN"
+	@tmux list-sessions | grep L0xy-WIN >& /dev/null && tmux attach -t "L0xy-WIN" || true
+	@tmux new-session -s "L0xy-WIN" -n "L0xy-FR" -d
+	@tmux split-window -h -t "L0xy-WIN"
+	@tmux split-window -v -t "L0xy-WIN"
+	@tmux select-pane -t "L0xy-WIN":"L0xy-FR".0
+	@tmux split-window -v -t "L0xy-WIN"
+	@tmux send-keys -t "L0xy-WIN":"L0xy-FR".0 "go run main.go http -l :8081" C-m
+	@tmux send-keys -t "L0xy-WIN":"L0xy-FR".1 "go run main.go http -l :8082" C-m
+	@tmux send-keys -t "L0xy-WIN":"L0xy-FR".2 "go run main.go run" C-m
+	@tmux send-keys -t "L0xy-WIN":"L0xy-FR".3 "sleep 5; make register-fake-http" C-m
+	@tmux send-keys -t "L0xy-WIN":"L0xy-FR".3 "make run-http-test"
+	@tmux attach -t "L0xy-WIN"
 
 pull:
 	@git pull origin `git rev-parse --abbrev-ref HEAD`

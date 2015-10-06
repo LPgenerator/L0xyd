@@ -9,12 +9,12 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/codegangsta/cli"
 
-	_ "github.com/LPgenerator/lpg-load-balancer/commands"
-	"github.com/LPgenerator/lpg-load-balancer/common"
-	"github.com/LPgenerator/lpg-load-balancer/helpers"
+	_ "github.com/LPgenerator/L0xyd/commands"
+	"github.com/LPgenerator/L0xyd/common"
+	"github.com/LPgenerator/L0xyd/helpers"
 )
 
-var NAME = "lpg-load-balancer"
+var NAME = "l0xyd"
 var VERSION = "dev"
 var REVISION = "HEAD"
 
@@ -29,7 +29,7 @@ func main() {
 
 	app := cli.NewApp()
 	app.Name = path.Base(os.Args[0])
-	app.Usage = "lpg-load-balancer"
+	app.Usage = "l0xyd"
 	app.Version = fmt.Sprintf("%s (%s)", common.VERSION, common.REVISION)
 	app.Author = "GoTLiuM InSPiRiT"
 	app.Email = "gotlium@gmail.com"

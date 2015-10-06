@@ -8,13 +8,13 @@ import (
 	log "github.com/Sirupsen/logrus"
 	service "github.com/ayufan/golang-kardianos-service"
 
-	"github.com/LPgenerator/lpg-load-balancer/common"
-	"github.com/LPgenerator/lpg-load-balancer/helpers"
-	"github.com/LPgenerator/lpg-load-balancer/helpers/service"
+	"github.com/LPgenerator/L0xyd/common"
+	"github.com/LPgenerator/L0xyd/helpers"
+	"github.com/LPgenerator/L0xyd/helpers/service"
 )
 
 const (
-	defaultServiceName = "lpg-load-balancer"
+	defaultServiceName = "l0xyd"
 	defaultDisplayName = "Simple load balancer with Http API."
 	defaultDescription = "Simple load balancer with Http API."
 )
@@ -58,7 +58,7 @@ func (n *NullService) Stop(s service.Service) error {
 
 func runServiceInstall(s service.Service, c *cli.Context) error {
 	if user := c.String("user"); user == "" && os.Getuid() == 0 {
-		log.Fatal("Please specify user that will run lpg-load-balancer service")
+		log.Fatal("Please specify user that will run l0xyd service")
 	}
 
 	if configFile := c.String("config"); configFile != "" {
