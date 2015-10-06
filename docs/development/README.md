@@ -4,9 +4,9 @@
 
 ### For Debian/Ubuntu
 ```bash
-apt-get install -y curl bison gcc
+sudo apt-get install -y curl bison gcc
 bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-source /root/.gvm/scripts/gvm
+source ~/.gvm/scripts/gvm
 gvm install go1.4.3
 gvm use go1.4.3
 gvm pkgset create l0xyd
@@ -16,6 +16,12 @@ gvm pkgset use l0xyd
 ### For OSX if you have brew
 ```
 brew install go
+bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
+source ~/.gvm/scripts/gvm
+gvm install go1.4.3
+gvm use go1.4.3
+gvm pkgset create l0xyd
+gvm pkgset use l0xyd
 ```
 
 ### For FreeBSD
