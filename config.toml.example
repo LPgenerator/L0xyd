@@ -1,6 +1,15 @@
 # Basic configuration
 #
 # Default:
+# lb-address = "127.0.0.1:8080"
+#
+# Default:
+# lb-log-file = ""
+#
+#
+# API
+#
+# Default:
 # api-address = "127.0.0.1:9090"
 #
 # Default:
@@ -9,11 +18,17 @@
 # Default:
 # api-password = "7eNQ4iWLgDw4Q6w"
 #
-# Default:
-# lb-address = "127.0.0.1:8080"
+#
+# WEB
 #
 # Default:
-# lb-log-file = ""
+# web-address = "127.0.0.1:9191"
+#
+# Default:
+# web-login = "admin"
+#
+# Default:
+# web-password = "7eNQ4iWLgDw4Q6w"
 #
 #
 # Default instances under Load Balancer

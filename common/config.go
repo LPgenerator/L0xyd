@@ -29,6 +29,9 @@ type BaseConfig struct {
 	ApiAddress                     string  `toml:"api-address"`
 	LbApiLogin                     string  `toml:"api-login"`
 	LbApiPassword                  string  `toml:"api-password"`
+	LbWebAddress                   string  `toml:"web-address"`
+	LbWebLogin                     string  `toml:"web-login"`
+	LbWebPassword                  string  `toml:"web-password"`
 	LbAddress                      string  `toml:"lb-address"`
 	LbLogFile                      string  `toml:"lb-log-file"`
 	LbEnableTace                   bool    `toml:"enable-trace"`
@@ -66,6 +69,9 @@ func NewConfig() *Config {
 			ApiAddress: "127.0.0.1:9090",
 			LbApiLogin: "lb",
 			LbApiPassword: "7eNQ4iWLgDw4Q6w",
+			LbWebAddress: "127.0.0.1:9191",
+			LbWebLogin: "admin",
+			LbWebPassword: "7eNQ4iWLgDw4Q6w",
 			LbAddress: "127.0.0.1:8080",
 			LbLogFile: "",
 			LbEnableTace: false,
