@@ -110,10 +110,20 @@
         function RemoveBackend() {
             var grid = $("#jqGrid");
             var rowKey = grid.jqGrid('getGridParam', "selrow");
+
+            if (rowKey == null) {
+                return showError("Backend is not selected!")
+            }
+
+            var url = rowKey.replace("http://", "");
+            if (!ValidateBackend(url)) {
+                return showError("Invalid backend!")
+            }
+
             $.ajax({
                 url: "/remove_backend",
                 type: "POST",
-                data: {backend: rowKey.replace("http://", "")},
+                data: {backend: url},
                 dataType: "json"
             }).done(function(data) {
                 if (typeof (data.status) == "undefined" || data.status != "OK") {
