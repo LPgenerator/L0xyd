@@ -201,6 +201,7 @@ func HandleStats(w http.ResponseWriter, r *http.Request) {
 
 func HandleStatus(w http.ResponseWriter, r *http.Request) {
 	updateSystemStatus()
+	setHttpHeaders(w)
 
 	stats, err := json.MarshalIndent(sysStatus, "", "  ")
 	if err == nil {
@@ -250,12 +251,13 @@ func (mr *RunCommand) Run() {
 	stats := stats.New()
 	fwd, _ := forward.New(fwd_logger)
 
-	// Trace Middleware
+	// Tracing Middleware
 	trc_log, _ := os.OpenFile(
 		mr.config.LbTaceFile, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
 	trc_mw, _ := trace.New(fwd, trc_log)
 	trc := getNextHandler(trc_mw, fwd, mr.config.LbEnableTace, "Tracing")
 
+	// Mirroring Middleware
 	mrr_mw, _ := mirror.New(trc, mr.config.LbMirroringMethods)
 	mrr := getNextHandler(mrr_mw, trc, mr.config.LbMirroringEnabled, "Mirroring")
 

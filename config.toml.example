@@ -139,9 +139,8 @@
 
 # Tracing
 #
-# Default:
+# Defaults:
 # enable-trace = false
-#
 # trace-file = "/tmp/lb.trace.log"
 
 
@@ -153,8 +152,6 @@
 
 # Mirroring
 #
-# Default:
+# Defaults:
 # enable-mirroring = true
-#
-# Default:
 # mirror-http-methods = "GET|HEAD"
