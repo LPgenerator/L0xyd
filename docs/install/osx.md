@@ -21,11 +21,3 @@ l0xyd start
 ```
 
 Voila! L0xyd is installed and will be run after system reboot.
-
-### Update
-
-Stop the service:
-
-```bash
-l0xyd stop
-```

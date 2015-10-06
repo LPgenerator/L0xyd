@@ -10,7 +10,7 @@ write `Command Prompt` in Windows search field, right click and select
 `Run as administrator`. You will be asked to confirm that you want to execute
 the elevated command prompt.
 
-Install l0xyd as a service and start it. You have to enter a valid password
+Install L0xyd as a service and start it. You have to enter a valid password
 for the current user account, because it's required to start the service by Windows:
 
 ```bash
@@ -18,7 +18,7 @@ l0xyd install --password ENTER-YOUR-PASSWORD
 l0xyd start
 ```
 
-Voila! l0xyd is installed and will be run after system reboot.
+Voila! L0xyd is installed and will be run after system reboot.
 
 Logs are stored in Windows Event Log.
 
@@ -31,7 +31,7 @@ cd C:\l0xyd
 l0xyd stop
 ```
 
-Download the binary for [x86][] or [amd64][] and replace LB's executable.
+Download the binary for [x86][] or [amd64][] and replace L0xyd's executable.
 
 Start service:
 

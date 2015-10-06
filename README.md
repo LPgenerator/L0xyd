@@ -88,7 +88,7 @@ The official repository for this project is on [Github.com](https://github.com/L
 
 ### Requirements
 
-**None:** l0xyd is run as a single binary.
+**None:** L0xyd is run as a single binary.
 
 This project is designed for the Linux, OS X and Windows operating systems.
 
@@ -96,7 +96,7 @@ This project is designed for the Linux, OS X and Windows operating systems.
 
 * [Install on OSX (preferred)](docs/install/osx.md)
 * [Install on Windows (preferred)](docs/install/windows.md)
-* [Use on FreeBSD](docs/install/freebsd.md)
+* [Install on FreeBSD](docs/install/freebsd.md)
 * [Install development environment](docs/development/README.md)
 
 ### Statistics

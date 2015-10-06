@@ -13,11 +13,11 @@ Give it permissions to execute:
 chmod +x /usr/local/bin/l0xyd
 ```
 
-Run GitLab-Runner:
+Run L0xyd:
 
 ```bash
 cd ~
 l0xyd run
 ```
 
-Voila! l0xyd is currently running, but it will not start automatically after system reboot.
+Voila! L0xyd is currently running, but it will not start automatically after system reboot.
