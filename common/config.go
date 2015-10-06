@@ -40,6 +40,11 @@ type BaseConfig struct {
 	LbMirroringMethods             string  `toml:"mirror-http-methods"`
 	LbMirroringEnabled             bool    `toml:"enable-mirroring"`
 
+	LbSSLEnable                    bool    `toml:"lb-enable-ssl"`
+	LbSSLAddress                   string  `toml:"lb-ssl-address"`
+	LbSSLCert                      string  `toml:"lb-ssl-cert"`
+	LbSSLKey                       string  `toml:"lb-ssl-key"`
+
 	LbStreamRetryConditions        string  `toml:"stream-retry-conditions"`
 	LbMonitorBrokenBackends        bool    `toml:"monitor-broken-backend"`
 	LbMonitorRemoveBrokenBackends  bool    `toml:"remove-broken-backends"`
@@ -82,6 +87,11 @@ func NewConfig() *Config {
 			LbTaceFile: "/tmp/lb.trace.log",
 			LbMirroringMethods: "GET|HEAD",
 			LbMirroringEnabled: false,
+
+			LbSSLEnable: false,
+			LbSSLAddress: "127.0.0.1:8181",
+			LbSSLCert: "certs/ssl.crt",
+			LbSSLKey: "certs/ssl.key",
 
 			LbStreamRetryConditions: `IsNetworkError() && Attempts() < 10`,
 			LbMonitorBrokenBackends: false,

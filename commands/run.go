@@ -380,8 +380,6 @@ func (mr *RunCommand) Run() {
 	stream, _ := stream.New(
 		rl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
 
-	//todo: Memetrics Middleware
-
 	LB.lb = lb
 	LB.mirror = mrr_mw
 	LB.config = mr.config
@@ -413,6 +411,19 @@ func (mr *RunCommand) Run() {
 		}
 	}
 
+	if mr.config.LbSSLEnable {
+		log.Println("LB ssl listen at", mr.config.LbSSLAddress)
+		go func() {
+			ss := &http.Server{
+				Addr:           mr.config.LbSSLAddress,
+				Handler:        stream,
+			}
+			if err := ss.ListenAndServeTLS(
+				mr.config.LbSSLCert, mr.config.LbSSLKey); err != nil {
+				log.Errorf("Ssl server %s exited with error: %s", ss.Addr, err)
+			}
+		}()
+	}
 	log.Println("LB listen at", listen)
 	if err := s.ListenAndServe(); err != nil {
 		log.Errorf("Server %s exited with error: %s", s.Addr, err)

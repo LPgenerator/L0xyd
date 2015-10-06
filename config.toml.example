@@ -1,10 +1,16 @@
 # Basic configuration
 #
-# Default:
+# HTTP:
 # lb-address = "127.0.0.1:8080"
 #
+# SSL:
+# lb-enable-ssl = false
+# lb-ssl-address = "127.0.0.1:8181"
+# lb-ssl-cert = "certs/ssl.crt"
+# lb-ssl-key = "certs/ssl.key"
+#
 # Default:
-# lb-log-file = ""
+# lb-log-file = ""         # while directive is empty - logging is disabled
 #
 #
 # API
