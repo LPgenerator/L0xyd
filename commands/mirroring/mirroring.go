@@ -1,7 +1,7 @@
 package mirror
 
 import (
-	//"fmt"
+	"strings"
 	"net/url"
 	"net/http"
 	"io/ioutil"
@@ -10,31 +10,34 @@ import (
 )
 
 type Mirroring struct {
-	next       http.Handler
-	mirrors    []string
+	next        http.Handler
+	mirrors     []string
 	rewriter    ReqRewriter
+	methods     map[string]bool
 }
 
 type ReqRewriter interface {
 	Rewrite(r *http.Request)
 }
 
-func New(next http.Handler) (*Mirroring, error) {
+func New(next http.Handler, methods string) (*Mirroring, error) {
 	strm := &Mirroring{
-		next: next,
+		next:    next,
+		methods: make(map[string]bool),
+	}
+	for _, m := range strings.Split(methods, "|") {
+		strm.methods[m] = true
 	}
 	return strm, nil
 }
 
 func (m *Mirroring) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// fmt.Println(m.mirrors)
 	pw := &utils.ProxyWriter{W: w}
-	if r.Method == "GET" || r.Method == "HEAD" {
+	if m.methods[r.Method] {
 		for _, mirror := range m.mirrors {
 			m.mirrorRequest(mirror, w, r)
 		}
 	}
-
 	m.next.ServeHTTP(pw, r)
 }
 

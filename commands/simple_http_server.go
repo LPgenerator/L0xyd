@@ -69,7 +69,7 @@ func (c *SHSCommand) Execute(context *cli.Context) {
 		http.HandleFunc("/", HandleMain)
 	}
 
-	listen := ":8081"
+	listen := "127.0.0.1:8081"
 	if c.ListenAddr != "" {
 		listen = c.ListenAddr
 	}

@@ -34,6 +34,8 @@ type BaseConfig struct {
 	LbEnableTace                   bool    `toml:"enable-trace"`
 	LbTaceFile                     string  `toml:"trace-file"`
 	LbEnableRebalancer             bool    `toml:"enable-rebalancer"`
+	LbMirroringMethods             string  `toml:"mirror-http-methods"`
+	LbMirroringEnabled             bool    `toml:"enable-mirroring"`
 
 	LbStreamRetryConditions        string  `toml:"stream-retry-conditions"`
 	LbMonitorBrokenBackends        bool    `toml:"monitor-broken-backend"`
@@ -68,6 +70,8 @@ func NewConfig() *Config {
 			LbLogFile: "",
 			LbEnableTace: false,
 			LbTaceFile: "/tmp/lb.trace.log",
+			LbMirroringMethods: "GET|HEAD",
+			LbMirroringEnabled: false,
 
 			LbStreamRetryConditions: `IsNetworkError() && Attempts() < 10`,
 			LbMonitorBrokenBackends: false,

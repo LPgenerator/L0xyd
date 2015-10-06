@@ -16,27 +16,27 @@ import (
 )
 
 type Backend struct {
-	ResponseCounts      map[int]int
-	State               bool
+	ResponseCounts  map[int]int
+	State           bool
 }
 
 type Monitoring struct {
-	m           *sync.RWMutex
-	next        http.Handler
-	backends    map[string]Backend
-	lb          *roundrobin.RoundRobin
-	config      *common.Config
-	clock       timetools.TimeProvider
-	interval    time.Time
+	m               *sync.RWMutex
+	next            http.Handler
+	backends        map[string]Backend
+	lb              *roundrobin.RoundRobin
+	config          *common.Config
+	clock           timetools.TimeProvider
+	interval        time.Time
 }
 
 func New(next http.Handler, config *common.Config) (*Monitoring, error) {
 	strm := &Monitoring{
-		backends: make(map[string]Backend),
-		m:        &sync.RWMutex{},
-		next:     next,
-		config:   config,
-		clock:    &timetools.RealTime{},
+		backends:   make(map[string]Backend),
+		m:          &sync.RWMutex{},
+		next:       next,
+		config:     config,
+		clock:      &timetools.RealTime{},
 	}
 	return strm, nil
 }
@@ -77,6 +77,7 @@ func (m *Monitoring) doStart() {
 			if m.backends[backend].State == false { continue }
 			if m.backends[backend].ResponseCounts[502] > max_fails {
 				m.removeBackend(backend)
+				m.addBackupServer()
 				m.callNotificationUrl(backend)
 				m.callNotificationScript(backend)
 				m.safeRemove502(backend)
@@ -114,6 +115,10 @@ func (m *Monitoring) removeBackend(backend string) {
 		bak.State = false
 		m.backends[backend] = bak
 	}
+}
+
+func (m *Monitoring) addBackupServer() {
+	//todo: do it
 }
 
 func (m *Monitoring) callNotificationScript(backend string) {

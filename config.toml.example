@@ -1,4 +1,4 @@
-# API listen port
+# Basic configuration
 #
 # Default:
 # api-address = "127.0.0.1:9090"
@@ -16,24 +16,13 @@
 # lb-log-file = ""
 #
 #
-# Statistics
-#
-# Default:
-# statistics-enabled = true
-#
-# Default:
-# enable-trace = false
-#
-# trace-file = "/tmp/lb.trace.log"
-#
-#
 # Default instances under Load Balancer
 #
 # [Servers]
 #   [Servers.web-1]
 #   url = "http://127.0.0.1:8081"
 #   weight = 1
-#   type = "down"      # standard/mirror/backup/down; default: standard
+#   type = "down"          # standard/mirror/backup/down; default: standard
 #
 #   [Servers.web-2]
 #   url = "http://127.0.0.1:8082"
@@ -146,3 +135,26 @@
 # Variable defines how the limiting should be done. e.g. 'client.ip' or 'request.header.X-My-Header'
 # Default:
 # ratelimit-variable = "client.ip" // 'client.ip' or 'request.header.X-My-Header'
+
+
+# Tracing
+#
+# Default:
+# enable-trace = false
+#
+# trace-file = "/tmp/lb.trace.log"
+
+
+# Statistics
+#
+# Default:
+# statistics-enabled = true
+
+
+# Mirroring
+#
+# Default:
+# enable-mirroring = true
+#
+# Default:
+# mirror-http-methods = "GET|HEAD"

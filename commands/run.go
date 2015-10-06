@@ -256,8 +256,8 @@ func (mr *RunCommand) Run() {
 	trc_mw, _ := trace.New(fwd, trc_log)
 	trc := getNextHandler(trc_mw, fwd, mr.config.LbEnableTace, "Tracing")
 
-	mrr_mw, _ := mirror.New(trc)
-	mrr := getNextHandler(mrr_mw, trc, mr.config.LbStats, "Mirroring")
+	mrr_mw, _ := mirror.New(trc, mr.config.LbMirroringMethods)
+	mrr := getNextHandler(mrr_mw, trc, mr.config.LbMirroringEnabled, "Mirroring")
 
 	// Statistics Middleware
 	mts_mw, _ := statistics.New(mrr, stats)
