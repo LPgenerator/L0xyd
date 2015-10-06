@@ -90,7 +90,7 @@
                 url: url,
                 type: $("#type_id").val()
             };
-            
+
             $.ajax({
                 url: "/add_backend",
                 type: "POST",
@@ -155,6 +155,7 @@
         function OnLoad() {
             UpdateTable();
             FixTable();
+            UpdateStats();
             setInterval(UpdateData, 15000);
             setInterval(UpdateStats, 5000);
         }
