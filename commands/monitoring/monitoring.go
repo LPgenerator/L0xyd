@@ -114,6 +114,7 @@ func (m *Monitoring) removeBackend(backend string) {
 		var bak = m.backends[backend]
 		bak.State = false
 		m.backends[backend] = bak
+		// todo: mark as removed on basic config
 	}
 }
 
