@@ -238,10 +238,10 @@ func HandleWebData(w http.ResponseWriter, req *http.Request) {
 	for id, server := range LB.config.Servers {
 		response = append(
 			response, map[string]interface{}{
-				"id": id,
-				"backend": server.Url,
 				"weight": server.Weight,
+				"backend": server.Url,
 				"type": server.Type,
+				"id": id,
 		})
 	}
 	data, err := json.MarshalIndent(response, "", "  ")
@@ -264,14 +264,15 @@ func HandleWebRemove(w http.ResponseWriter, r *http.Request) {
 func (mr *RunCommand) RunWeb() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/", HandleWebIndex)
-	mux.HandleFunc("/data.json", HandleWebData)
-	mux.HandleFunc("/remove_backend", HandleWebRemove)
 	mux.HandleFunc("/add_backend", HandleAdd)
+	mux.HandleFunc("/data.json", HandleWebData)
 	mux.HandleFunc("/stats.json", HandleApiStats)
+	mux.HandleFunc("/remove_backend", HandleWebRemove)
 
 	n := negroni.New()
 	n.Use(helpers.LogMiddleware())
-	n.Use(helpers.AuthMiddleware(mr.config.LbWebLogin, mr.config.LbWebPassword))
+	n.Use(helpers.AuthMiddleware(
+		mr.config.LbWebLogin, mr.config.LbWebPassword))
 
 	log.Println("LB Web listen at", mr.config.LbWebAddress)
 	n.UseHandler(mux)
@@ -288,7 +289,8 @@ func (mr *RunCommand) RunApi() {
 
 	n := negroni.New()
 	n.Use(helpers.LogMiddleware())
-	n.Use(helpers.AuthMiddleware(mr.config.LbApiLogin, mr.config.LbApiPassword))
+	n.Use(helpers.AuthMiddleware(
+		mr.config.LbApiLogin, mr.config.LbApiPassword))
 
 	log.Println("LB Api listen at", mr.config.ApiAddress)
 	n.UseHandler(mux)
@@ -298,16 +300,15 @@ func (mr *RunCommand) RunApi() {
 }
 
 func (mr *RunCommand) RunTLS() {
-	if mr.config.LbSSLEnable {
-		ss := &http.Server{
-			Addr:           mr.config.LbSSLAddress,
-			Handler:        LB.stream,
-		}
-		log.Println("LB Ssl listen at", mr.config.LbSSLAddress)
-		if err := ss.ListenAndServeTLS(
-			mr.config.LbSSLCert, mr.config.LbSSLKey); err != nil {
-			log.Errorf("Ssl server %s exited with error: %s", ss.Addr, err)
-		}
+	if !mr.config.LbSSLEnable { return }
+	ss := &http.Server{
+		Addr:           mr.config.LbSSLAddress,
+		Handler:        LB.stream,
+	}
+	log.Println("LB Ssl listen at", mr.config.LbSSLAddress)
+	if err := ss.ListenAndServeTLS(
+		mr.config.LbSSLCert, mr.config.LbSSLKey); err != nil {
+		log.Errorf("Ssl server %s exited with error: %s", ss.Addr, err)
 	}
 }
 
@@ -316,12 +317,10 @@ func (mr *RunCommand) RunHttp() {
 	if mr.ListenAddr != "" {
 		listen = mr.ListenAddr
 	}
-
 	s := &http.Server{
 		Addr:           listen,
 		Handler:        LB.stream,
 	}
-
 	log.Println("LB Http listen at", listen)
 	if err := s.ListenAndServe(); err != nil {
 		log.Errorf("Server %s exited with error: %s", s.Addr, err)
@@ -363,7 +362,8 @@ func (mr *RunCommand) Run() {
 
 	// Mirroring Middleware
 	mrr_mw, _ := mirror.New(trc, mr.config.LbMirroringMethods)
-	mrr := getNextHandler(mrr_mw, trc, mr.config.LbMirroringEnabled, "Mirroring")
+	mrr := getNextHandler(
+		mrr_mw, trc, mr.config.LbMirroringEnabled, "Mirroring")
 
 	// Statistics Middleware
 	mts_mw, _ := statistics.New(mrr, stats)

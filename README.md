@@ -103,6 +103,7 @@ This project is designed for the Linux, OS X and Windows operating systems.
 
 * 10K+ req per sec
 * 16 MB memory usage
+* 10 MB on fs
 
 ### Help
 
