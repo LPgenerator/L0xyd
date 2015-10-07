@@ -20,6 +20,7 @@ import (
 	"github.com/mailgun/oxy/trace"
 	"github.com/mailgun/oxy/stream"
 	"github.com/mailgun/oxy/forward"
+	"github.com/codegangsta/negroni"
 	"github.com/mailgun/oxy/connlimit"
 	"github.com/mailgun/oxy/ratelimit"
 	"github.com/mailgun/oxy/roundrobin"
@@ -55,6 +56,7 @@ var LB struct {
 	config           *common.Config
 	stats            *stats.Stats
 	mirror           *mirror.Mirroring
+	stream           *stream.Streamer
 }
 
 
@@ -259,55 +261,75 @@ func HandleWebRemove(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (mr *RunCommand) RunWeb() {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", HandleWebIndex)
+	mux.HandleFunc("/data.json", HandleWebData)
+	mux.HandleFunc("/remove_backend", HandleWebRemove)
+	mux.HandleFunc("/add_backend", HandleAdd)
+	mux.HandleFunc("/stats.json", HandleApiStats)
+
+	n := negroni.New()
+	n.Use(helpers.LogMiddleware())
+	n.Use(helpers.AuthMiddleware(mr.config.LbWebLogin, mr.config.LbWebPassword))
+
+	log.Println("LB Web listen at", mr.config.LbWebAddress)
+	n.UseHandler(mux)
+	if err := http.ListenAndServe(mr.config.LbWebAddress, n); err != nil {
+		log.Errorf("Web server exited with error: %s", err)
+	}
+}
+
+func (mr *RunCommand) RunApi() {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", HandleApiIndex)
+	mux.HandleFunc("/stats", HandleApiStats)
+	mux.HandleFunc("/status", HandleApiStatus)
+
+	n := negroni.New()
+	n.Use(helpers.LogMiddleware())
+	n.Use(helpers.AuthMiddleware(mr.config.LbApiLogin, mr.config.LbApiPassword))
+
+	log.Println("LB Api listen at", mr.config.ApiAddress)
+	n.UseHandler(mux)
+	if err := http.ListenAndServe(mr.config.ApiAddress, n); err != nil {
+		log.Errorf("Api server exited with error: %s", err)
+	}
+}
+
+func (mr *RunCommand) RunTLS() {
+	if mr.config.LbSSLEnable {
+		ss := &http.Server{
+			Addr:           mr.config.LbSSLAddress,
+			Handler:        LB.stream,
+		}
+		log.Println("LB Ssl listen at", mr.config.LbSSLAddress)
+		if err := ss.ListenAndServeTLS(
+			mr.config.LbSSLCert, mr.config.LbSSLKey); err != nil {
+			log.Errorf("Ssl server %s exited with error: %s", ss.Addr, err)
+		}
+	}
+}
+
+func (mr *RunCommand) RunHttp() {
+	listen := mr.config.LbAddress
+	if mr.ListenAddr != "" {
+		listen = mr.ListenAddr
+	}
+
+	s := &http.Server{
+		Addr:           listen,
+		Handler:        LB.stream,
+	}
+
+	log.Println("LB Http listen at", listen)
+	if err := s.ListenAndServe(); err != nil {
+		log.Errorf("Server %s exited with error: %s", s.Addr, err)
+		os.Exit(255)
+	}
+}
+
 func (mr *RunCommand) Run() {
-	go func() {
-		mux := http.NewServeMux()
-		mux.HandleFunc(
-			"/", helpers.BasicAuth(
-			helpers.LogRequests(HandleApiIndex),
-			mr.config.LbApiLogin, mr.config.LbApiPassword))
-		mux.HandleFunc(
-			"/stats", helpers.BasicAuth(
-			helpers.LogRequests(HandleApiStats),
-			mr.config.LbApiLogin, mr.config.LbApiPassword))
-		mux.HandleFunc(
-			"/status", helpers.BasicAuth(
-			helpers.LogRequests(HandleApiStatus),
-			mr.config.LbApiLogin, mr.config.LbApiPassword))
-		log.Println("LB API listen at", mr.config.ApiAddress)
-		if err := http.ListenAndServe(mr.config.ApiAddress, mux); err != nil {
-			log.Errorf("Api server exited with error: %s", err)
-		}
-	}()
-
-	go func() {
-		mux := http.NewServeMux()
-		mux.HandleFunc(
-			"/", helpers.BasicAuth(
-			helpers.LogRequests(HandleWebIndex),
-			mr.config.LbWebLogin, mr.config.LbWebPassword))
-		mux.HandleFunc(
-			"/data.json", helpers.BasicAuth(
-			helpers.LogRequests(HandleWebData),
-			mr.config.LbWebLogin, mr.config.LbWebPassword))
-		mux.HandleFunc(
-			"/remove_backend", helpers.BasicAuth(
-			helpers.LogRequests(HandleWebRemove),
-			mr.config.LbWebLogin, mr.config.LbWebPassword))
-		mux.HandleFunc(
-			"/add_backend", helpers.BasicAuth(
-			helpers.LogRequests(HandleAdd),
-			mr.config.LbWebLogin, mr.config.LbWebPassword))
-		mux.HandleFunc(
-			"/stats.json", helpers.BasicAuth(
-			helpers.LogRequests(HandleApiStats),
-			mr.config.LbWebLogin, mr.config.LbWebPassword))
-		log.Println("LB Web listen at", mr.config.LbWebAddress)
-		if err := http.ListenAndServe(mr.config.LbWebAddress, mux); err != nil {
-			log.Errorf("Web server exited with error: %s", err)
-		}
-	}()
-
 	oxyLogger := &helpers.OxyLogger{}
 	fwd_logger := forward.Logger(oxyLogger)
 	stm_logger := stream.Logger(oxyLogger)
@@ -380,23 +402,8 @@ func (mr *RunCommand) Run() {
 	stream, _ := stream.New(
 		rl, stm_logger, stream.Retry(mr.config.LbStreamRetryConditions))
 
-	LB.lb = lb
-	LB.mirror = mrr_mw
-	LB.config = mr.config
-	LB.stats = stats
-
 	if mr.config.LbMonitorBrokenBackends {
 		go mon_mw.Start(lb)
-	}
-
-	listen := mr.config.LbAddress
-	if mr.ListenAddr != "" {
-		listen = mr.ListenAddr
-	}
-
-	s := &http.Server{
-		Addr:           listen,
-		Handler:        stream,
 	}
 
 	for serverName, server := range mr.config.Servers {
@@ -411,24 +418,16 @@ func (mr *RunCommand) Run() {
 		}
 	}
 
-	if mr.config.LbSSLEnable {
-		log.Println("LB ssl listen at", mr.config.LbSSLAddress)
-		go func() {
-			ss := &http.Server{
-				Addr:           mr.config.LbSSLAddress,
-				Handler:        stream,
-			}
-			if err := ss.ListenAndServeTLS(
-				mr.config.LbSSLCert, mr.config.LbSSLKey); err != nil {
-				log.Errorf("Ssl server %s exited with error: %s", ss.Addr, err)
-			}
-		}()
-	}
-	log.Println("LB listen at", listen)
-	if err := s.ListenAndServe(); err != nil {
-		log.Errorf("Server %s exited with error: %s", s.Addr, err)
-		os.Exit(255)
-	}
+	LB.lb = lb
+	LB.mirror = mrr_mw
+	LB.config = mr.config
+	LB.stats = stats
+	LB.stream = stream
+
+	go mr.RunApi()
+	go mr.RunWeb()
+	go mr.RunTLS()
+	go mr.RunHttp()
 }
 
 func (mr *RunCommand) Start(s service.Service) error {
