@@ -6,8 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	//"bufio"
-	//"fmt"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/gorilla/websocket"
@@ -72,17 +70,6 @@ func NewProxy(target *url.URL) *WebsocketProxy {
 	}
 	return &WebsocketProxy{Backend: backend}
 }
-
-
-/*
-func (rw *http.ResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
-	hijacker, ok := rw.ResponseWriter.(http.Hijacker)
-	if !ok {
-		return nil, nil, fmt.Errorf("the ResponseWriter doesn't support the Hijacker interface")
-	}
-	return hijacker.Hijack()
-}
-*/
 
 
 // ServeHTTP implements the http.Handler that proxies WebSocket connections.
@@ -157,7 +144,7 @@ func (w *WebsocketProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 		http.Error(rw, "Remote backend unreachable", http.StatusBadGateway)
 		return
 	}
-	//connBackend.WriteMessage(websocket.TextMessage, []byte("ping"))
+
 	defer connBackend.Close()
 
 	upgrader := w.Upgrader
