@@ -39,6 +39,7 @@ type BaseConfig struct {
 	LbEnableRebalancer             bool    `toml:"enable-rebalancer"`
 	LbMirroringMethods             string  `toml:"mirror-http-methods"`
 	LbMirroringEnabled             bool    `toml:"enable-mirroring"`
+	LbWsEnabled                    bool    `toml:"enable-websockets"`
 
 	LbSSLEnable                    bool    `toml:"lb-enable-ssl"`
 	LbSSLAddress                   string  `toml:"lb-ssl-address"`
@@ -114,6 +115,7 @@ func NewConfig() *Config {
 			LbEnableXHeader: false,
 			LbXHeaderKey: "X-Proxy",
 			LbXHeaderVal: "L0xyd",
+			LbWsEnabled: false,
 
 			Servers: make(map[string]Server),
 		},

@@ -37,6 +37,10 @@
 			"Rev": "0a14b63a7466ee44de4a90f998fad73afa8482bf"
 		},
 		{
+			"ImportPath": "github.com/gorilla/websocket",
+			"Rev": "361d4c0ffd78338ebe0a9e6320cdbe115d7dc026"
+		},
+		{
 			"ImportPath": "github.com/liudng/dogo",
 			"Rev": "27f30515c54c2857561ad2483df6f9fa87720f82"
 		}

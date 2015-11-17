@@ -15,25 +15,17 @@
 #
 # API
 #
-# Default:
+# Defaults:
 # api-address = "127.0.0.1:9090"
-#
-# Default:
 # api-login = "lb"
-#
-# Default:
 # api-password = "7eNQ4iWLgDw4Q6w"
 #
 #
 # WEB
 #
-# Default:
+# Defaults:
 # web-address = "127.0.0.1:9191"
-#
-# Default:
 # web-login = "admin"
-#
-# Default:
 # web-password = "7eNQ4iWLgDw4Q6w"
 #
 #
