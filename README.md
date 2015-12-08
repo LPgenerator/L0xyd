@@ -2,8 +2,6 @@
 
 Simple load balancer with Http API.
 
-[![Build Status](http://ci.lpgenerator.ru/projects/7/status.png?ref=master)](http://ci.lpgenerator.ru/projects/7?ref=master)
-
 
 ### Usage
 
