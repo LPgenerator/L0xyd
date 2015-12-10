@@ -20,6 +20,11 @@ RPM_ARCHS ?= x86_64 i686 arm armhf
 
 all: deps test lint toolchain build
 
+deploy:
+	@rsync -auv out/deb/l0xyd_amd64.deb root@10.10.10.105:/tmp/$(PACKAGE_NAME)_$(PACKAGE_ARCH)-$(VERSION).deb
+	@ssh root@10.10.10.105 "aptly repo add lpg /tmp/$(PACKAGE_NAME)_$(PACKAGE_ARCH)-$(VERSION).deb"
+	@ssh root@10.10.10.105 "aptly publish update lpg"
+
 run:
 	dogo
 
