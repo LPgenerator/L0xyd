@@ -359,7 +359,7 @@ func (mr *RunCommand) Run() {
 	}
 
 	stats := stats.New()
-	fwd, _ := forward.New(fwd_logger)
+	fwd, _ := forward.New(fwd_logger, forward.PassHostHeader(true))
 
 	// Websocket Middleware
 	ws_mw, _ := websockets.New(fwd)
