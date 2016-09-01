@@ -3,8 +3,9 @@
 Download the binary for your system:
 
 ```bash
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-freebsd-amd64
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-freebsd-386
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-freebsd-amd64
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-freebsd-386
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-freebsd-arm
 ```
 
 Give it permissions to execute:

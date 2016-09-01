@@ -5,9 +5,10 @@
 Simply download one of the binaries for your system:
 
 ```bash
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-linux-386
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-linux-amd64
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-linux-arm
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-amd64
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-arm64
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-386
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-arm
 ```
 
 Give it permissions to execute:
@@ -39,9 +40,10 @@ sudo l0xyd stop
 Download the binary to replace LB's executable:
 
 ```bash
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-linux-386
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-linux-amd64
-wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-linux-arm
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-amd64
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-arm64
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-386
+wget -O /usr/local/bin/l0xyd https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-linux-arm
 ```
 
 Give it permissions to execute:

@@ -39,5 +39,5 @@ Start service:
 l0xyd start
 ```
 
-[x86]: https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-windows-386.exe
-[amd64]: https://github.com/LPgenerator/L0xyd/releases/download/v1.0/l0xyd-windows-amd64.exe
+[x86]: https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-windows-386.exe
+[amd64]: https://github.com/LPgenerator/L0xyd/releases/download/1.0.5/l0xyd-windows-amd64.exe
