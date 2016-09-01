@@ -9,7 +9,7 @@ LAST_TAG := $(shell git describe --tags --abbrev=0)
 COMGPLv3S := $(shell echo `git log --oneline $(LAST_TAG)..HEAD | wc -l`)
 VERSION := $(shell (cat VERSION || echo dev) | sed -e 's/^v//g')
 ifneq ($(RELEASE),true)
-    VERSION := $(shell echo $(VERSION)~beta.$(COMGPLv3S).g$(REVISION))
+    VERSION := $(shell echo $(VERSION).$(COMGPLv3S).g$(REVISION))
 endif
 ITTERATION := $(shell date +%s)
 BUILD_PLATFORMS ?= -os="linux" -os="darwin" -os="windows" -os="freebsd"
@@ -20,7 +20,7 @@ RPM_ARCHS ?= x86_64 i686 arm armhf
 
 all: deps test lint toolchain build
 
-deploy:
+deploy: build-and-deploy
 	@rsync -auv out/deb/l0xyd_amd64.deb root@10.10.10.105:/tmp/$(PACKAGE_NAME)_$(PACKAGE_ARCH)-$(VERSION).deb
 	@ssh root@10.10.10.105 "aptly repo add lpg /tmp/$(PACKAGE_NAME)_$(PACKAGE_ARCH)-$(VERSION).deb"
 	@ssh root@10.10.10.105 "aptly publish update lpg"
@@ -71,7 +71,7 @@ toolchain:
 
 build:
 	gox $(BUILD_PLATFORMS) \
-		-ldflags "-X main.NAME $(PACKAGE_NAME) -X main.VERSION $(VERSION) -X main.REVISION $(REVISION)" \
+		-ldflags "-X main.NAME=$(PACKAGE_NAME) -X main.VERSION=$(VERSION) -X main.REVISION=$(REVISION)" \
 		-output="out/binaries/$(NAME)-{{.OS}}-{{.Arch}}"
 
 lint:
