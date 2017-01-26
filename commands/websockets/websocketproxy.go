@@ -156,8 +156,10 @@ func (w *WebsocketProxy) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	upgradeHeader := http.Header{}
 	upgradeHeader.Set("Sec-WebSocket-Protocol",
 		resp.Header.Get(http.CanonicalHeaderKey("Sec-WebSocket-Protocol")))
-	upgradeHeader.Set("Set-Cookie",
-		resp.Header.Get(http.CanonicalHeaderKey("Set-Cookie")))
+	if resp.Header.Get(http.CanonicalHeaderKey("Set-Cookie")) != "" {
+		upgradeHeader.Set("Set-Cookie",
+			resp.Header.Get(http.CanonicalHeaderKey("Set-Cookie")))
+	}
 
 	// Now upgrade the existing incoming request to a WebSocket connection.
 	// Also pass the header that we gathered from the Dial handshake.
